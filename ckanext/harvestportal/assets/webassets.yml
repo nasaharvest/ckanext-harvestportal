@@ -1,0 +1,14 @@
+# harvestportal-js:
+#   filter: rjsmin
+#   output: ckanext-harvestportal/%(version)s-harvestportal.js
+#   contents:
+#     - js/harvestportal.js
+#   extra:
+#     preload:
+#       - base/main
+
+# harvestportal-css:
+#   filter: cssrewrite
+#   output: ckanext-harvestportal/%(version)s-harvestportal.css
+#   contents:
+#     - css/harvestportal.css

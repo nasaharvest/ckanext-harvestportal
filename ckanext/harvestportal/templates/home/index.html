@@ -1,0 +1,174 @@
+{% ckan_extends %}
+
+{% block subtitle %}{{ _('Harvest Portal') }}{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    .aerial-background {
+      background-image: url('/img/usgs-JghLJ2xPNZ0-unsplash.jpg');
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.7;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-banner {
+      position: relative;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="homepage">
+    <!-- Hero Banner with NASA Harvest style -->
+    <div class="hero-banner">
+      <div class="aerial-background"></div>
+      <div class="hero-content">
+        <div class="hero-text">
+          
+          <h1 >{{ _('Welcome to the Harvest Portal') }}</h1>
+        </div>
+        <div class="hero-image"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Impact Section -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="section-heading">
+            <h2>{{ _('What is the Harvest Portal?') }}</h2>
+          </div>
+          <div class="section-content">
+            <p>{{ _('Harvest Portal is the NASA Harvest Consortium\'s Data Repository for Agricultural Geospatial Data. Our mission is to enable and advance adoption of satellite Earth observations by public and private organizations to benefit food security, agriculture, and human and environmental resiliency in the US and worldwide. This Data Catalog provides searchable access to datasets, services, metadata, and data descriptions. Please contact the development team with any comments or suggestions about features or data.') }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Section -->
+      <div class="row search-section">
+        <div class="col-md-12 col-md-offset-1">
+          <div class="search-box">
+            <h3>{{ _('Find Datasets') }}</h3>
+            {% set tags = h.get_facet_items_dict('tags', c.search_facets, limit=4) %}
+            <form class="search-form" action="{% url_for controller='dataset', action='search' %}">
+              <div class="input-group input-group-lg">
+                <input type="text" class="form-control" name="q" placeholder="{{ _('Search agricultural datasets...') }}">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit">
+                    <i class="fa fa-search"></i> {{ _('Search') }}
+                  </button>
+                </span>
+              </div>
+              {% if tags %}
+                <div class="tag-list">
+                  <h4>{{ _('Popular Tags') }}</h4>
+                  {% for tag in tags %}
+                    <a class="tag" href="{% url_for controller='dataset', action='search', tags=tag.name %}">{{ tag.display_name }}</a>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Section -->
+      <div class="row featured-section">
+        <div class="col-md-4">
+          <div class="feature-box">
+            <i class="fa fa-database fa-4x feature-icon"></i>
+            <h3>{{ _('Agriculture Datasets') }}</h3>
+            <p>{{ _('Access our catalog of agricultural and food system datasets from various sources including satellite imagery, crop data, and more.') }}</p>
+            <a href="{% url_for controller='dataset', action='search' %}" class="btn btn-primary">
+              {{ _('Browse Datasets') }}
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-box">
+            <i class="fa fa-sitemap fa-4x feature-icon"></i>
+            <h3>{{ _('Data Providers') }}</h3>
+            <p>{{ _('Find datasets by organizations contributing to global food security and agricultural monitoring.') }}</p>
+            <a href="{% url_for controller='organization', action='index' %}" class="btn btn-primary">
+              {{ _('View Organizations') }}
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-box">
+            <i class="fa fa-folder-open fa-4x feature-icon"></i>
+            <h3>{{ _('Thematic Areas') }}</h3>
+            <p>{{ _('Browse datasets organized by agricultural themes including crop production, food security, and climate impacts.') }}</p>
+            <a href="{% url_for controller='group', action='index' %}" class="btn btn-primary">
+              {{ _('Explore Groups') }}
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Contribute Section -->
+      {% if h.check_access('package_create') %}
+        <div class="row contribute-section">
+          <div class="col-md-12 col-md-offset-1">
+            <div class="contribute-box text-center">
+              <h3>{{ _('Contribute to the Harvest Portal') }}</h3>
+              <p>{{ _('Help grow our collection by adding your own agricultural datasets to enhance global food security monitoring and decision-making.') }}</p>
+              <a class="btn btn-primary btn-lg" href="{% url_for controller='dataset', action='new' %}">
+                <i class="fa fa-plus-circle"></i> {{ _('Add Dataset') }}
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Featured Group Section -->
+      {% if c.featured_group %}
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1">
+            <div class="section-heading">
+              <h2>{{ _('Featured Group') }}</h2>
+            </div>
+            {% set group = h.get_featured_groups(count=1)[0] %}
+            <div class="featured-group-box">
+              <div class="media">
+                {% if group.image_display_url %}
+                  <div class="media-left">
+                    <img src="{{ group.image_display_url }}" alt="{{ group.display_name }}" class="media-object" width="120">
+                  </div>
+                {% endif %}
+                <div class="media-body">
+                  <h3 class="media-heading">
+                    <a href="{% url_for controller='group', action='read', id=group.name %}">
+                      {{ group.display_name }}
+                    </a>
+                  </h3>
+                  <p>{{ h.markdown_extract(group.description) }}</p>
+                  <a href="{% url_for controller='group', action='read', id=group.name %}" class="btn btn-primary">
+                    {{ _('View Datasets') }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

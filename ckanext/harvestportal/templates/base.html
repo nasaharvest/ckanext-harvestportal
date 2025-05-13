@@ -1,0 +1,31 @@
+{% ckan_extends %}
+{% block links %}
+  {{ super() }}
+  <link rel="shortcut icon" href="/img/harvest_portal.ico" />
+{% endblock %}
+{% block custom_styles %} {{ super() }}
+<link rel="stylesheet" href="/harvestportal.css" />
+<style>
+        /* Import Raleway font */
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap');
+
+/* Apply Raleway to specific elements */
+body {
+  font-family: 'Raleway', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
+}
+
+.hero-text h1 {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 700;
+  font-size: 3.5rem;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+</style>
+{% endblock %}
+
