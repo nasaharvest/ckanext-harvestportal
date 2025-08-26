@@ -5,5 +5,6 @@ about_url: http://example.com/about-my-schema
 resource_fields:
   - field_name: extra
     label: Extra Metadata
-    form_snippet: large_text
+    preset: json_object
+    form_snippet: textarea.html
     required: false
