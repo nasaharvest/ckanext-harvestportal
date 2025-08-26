@@ -12,14 +12,13 @@ import ckan.plugins.toolkit as toolkit
 
 class HarvestportalPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
-    
+
     # plugins.implements(plugins.IAuthFunctions)
     # plugins.implements(plugins.IActions)
     # plugins.implements(plugins.IBlueprint)
     # plugins.implements(plugins.IClick)
     # plugins.implements(plugins.ITemplateHelpers)
     # plugins.implements(plugins.IValidators)
-    
 
     # IConfigurer
 
@@ -28,7 +27,45 @@ class HarvestportalPlugin(plugins.SingletonPlugin):
         toolkit.add_public_directory(config_, "public")
         toolkit.add_resource("assets", "harvestportal")
 
-    
+    def create_resource_schema(self):
+        schema = super(HarvestportalPlugin, self).create_resource_schema()
+        schema.update(
+            {
+                "extra_resource_meta": [
+                    toolkit.get_validator("ignore_empty"),
+                    toolkit.get_validator("json_dict"),
+                    toolkit.get_converter("convert_to_extras"),
+                ]
+            }
+        )
+        return schema
+
+    def update_resource_schema(self):
+        schema = super(HarvestportalPlugin, self).update_resource_schema()
+        schema.update(
+            {
+                "extra_resource_meta": [
+                    toolkit.get_validator("ignore_empty"),
+                    toolkit.get_validator("json_dict"),
+                    toolkit.get_converter("convert_to_extras"),
+                ]
+            }
+        )
+        return schema
+
+    def show_resource_schema(self):
+        schema = super(HarvestportalPlugin, self).show_resource_schema()
+        schema.update(
+            {
+                "extra_resource_meta": [
+                    toolkit.get_validator("ignore_empty"),
+                    toolkit.get_validator("json_dict"),
+                    toolkit.get_converter("convert_to_extras"),
+                ]
+            }
+        )
+        return schema
+
     # IAuthFunctions
 
     # def get_auth_functions(self):
@@ -58,4 +95,3 @@ class HarvestportalPlugin(plugins.SingletonPlugin):
 
     # def get_validators(self):
     #     return validators.get_validators()
-    

@@ -1,0 +1,4 @@
+{% ckan_extends %} {% block basic_fields_url %} {{ super() }} {{
+form.input('extra_resource_meta', label=_('Additional Resource Metadata'),
+value=data.extra_resource_meta, error=errors.extra_resource_meta) }} {% endblock
+%}

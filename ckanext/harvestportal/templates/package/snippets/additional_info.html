@@ -1,0 +1,7 @@
+{% ckan_extends %} {% block additional_fields_list %} {{ super() }} {% if
+resource.get('my_custom_field') %}
+<li class="additional-info-list-item">
+  <strong>{{ _('Additional Resource Metadata') }}:</strong>
+  <span>{{ resource.extra_resource_meta }}</span>
+</li>
+{% endif %} {% endblock %}
