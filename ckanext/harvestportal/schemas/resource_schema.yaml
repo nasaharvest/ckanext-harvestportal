@@ -1,0 +1,9 @@
+scheming_version: 1
+dataset_type: my-dataset-type
+about_url: http://example.com/about-my-schema
+
+resource_fields:
+  - field_name: extra
+    label: Extra Metadata
+    form_snippet: large_text
+    required: false
