@@ -1,0 +1,15 @@
+{% ckan_extends %} {# Adds a link from the login form to the single sign-on
+provider. #} {% block form %} {% block sso_form %}
+<h4>{% trans %}Note for existing users:</h4>
+<p>
+  If you have not already, please follow this link to the new Sign-On page.
+  There you can create an account using an email address or via single sign-on.
+  Make sure to use the same email as your existing account so all your
+  information is synced. {% endtrans %}
+</p>
+<p>
+  <a href="{{ h.url_for('user.login') }}/oidc-pkce" class="btn btn-primary"
+    ><i class="fa fa-sign-in"></i> Log in via single sign-on</a
+  >
+</p>
+{% endblock %} {% endblock %} {% block secondary_content %} {% endblock %}
