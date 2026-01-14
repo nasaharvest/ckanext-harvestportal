@@ -7,7 +7,9 @@ provider. #} {% block form %} {% block sso_form %}
   Create an account using an email address or via a social sign-on method like
   Google or Apple. <br />
   Be sure to use the same email address as your existing account so that all
-  your information is synced. {% endtrans %}
+  your information is synced. <br />
+  <br />
+  For assistance, please contact keniston@umd.edu.{% endtrans %}
 </p>
 <p>
   <a href="{{ h.url_for('user.login') }}/oidc-pkce" class="btn btn-primary"
