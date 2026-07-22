@@ -8,15 +8,18 @@
 {% endblock %}
 
 {% block content %}
-  <div class="api-docs-page">
+  {# See home/index.html for why #content/role=main are set explicitly here:
+     this template replaces {% block content %} entirely, which is where
+     core's page.html normally provides the skip-link target. #}
+  <div class="api-docs-page" id="content" role="main">
     <div class="container api-docs-intro">
       <h1>{{ _('Harvest Portal API') }}</h1>
       <p>{{ _('This page documents the read-only dataset search, metadata, and DataStore query endpoints available on the Harvest Portal. Write, account, and administrative actions are intentionally not documented here.') }}</p>
       <p>
         {{ _('For the complete CKAN Action API and DataStore API reference — including authentication and write operations — see the') }}
-        <a href="https://docs.ckan.org/en/latest/api/index.html" target="_blank" rel="noopener noreferrer">{{ _('official CKAN API Guide') }}</a>
+        <a href="https://docs.ckan.org/en/latest/api/index.html" target="_blank" rel="noopener noreferrer">{{ _('official CKAN API Guide') }}<span class="visually-hidden">{{ _('(opens in a new tab)') }}</span></a>
         {{ _('and the') }}
-        <a href="https://docs.ckan.org/en/latest/maintaining/datastore.html" target="_blank" rel="noopener noreferrer">{{ _('DataStore API reference') }}</a>.
+        <a href="https://docs.ckan.org/en/latest/maintaining/datastore.html" target="_blank" rel="noopener noreferrer">{{ _('DataStore API reference') }}<span class="visually-hidden">{{ _('(opens in a new tab)') }}</span></a>.
       </p>
     </div>
     <div id="swagger-ui" class="container"></div>

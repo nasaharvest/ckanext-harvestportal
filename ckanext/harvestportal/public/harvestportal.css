@@ -10,6 +10,11 @@
   --hp-green: #4AA812;
   --hp-green-dark: #3B8A0E;
   --hp-green-tint: #EAF5E1;
+  /* The brand green above is only 3.04:1 against white text (fails WCAG AA's
+     4.5:1 for normal text), so anywhere white text sits directly on a green
+     background uses these darker, same-hue, AA-safe variants instead. */
+  --hp-green-action: #3B860E;
+  --hp-green-action-dark: #316F0C;
   --hp-teal: #1E6F66;
   --hp-bg: #F7F8F5;
   --hp-white: #FFFFFF;
@@ -67,7 +72,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .masthead .main-navbar ul li a:hover {
-  background-color: var(--hp-green-dark);
+  background-color: var(--hp-green-action-dark);
   color: #fff;
   text-decoration: none;
 }
@@ -230,15 +235,16 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 6px;
 }
 
-.search-card h3 {
+.search-card h2 {
   margin-top: 0;
   margin-bottom: 20px;
   color: var(--hp-navy);
   font-weight: 600;
+  font-size: 1.4rem;
 }
 
 .search-card .btn {
-  background-color: var(--hp-green);
+  background-color: var(--hp-green-action);
   border: 0;
   padding: 10px 20px;
   color: white;
@@ -248,14 +254,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .search-card .btn:hover,
 .search-card .btn:focus {
-  background-color: var(--hp-green-dark);
+  background-color: var(--hp-green-action-dark);
 }
 
 .tag-list {
   margin-top: 20px;
 }
 
-.tag-list h4 {
+.tag-list h3 {
   font-size: 13px;
   margin-bottom: 10px;
   text-transform: uppercase;
@@ -278,7 +284,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .tag:hover {
-  background-color: var(--hp-green);
+  background-color: var(--hp-green-action);
   color: white;
   text-decoration: none;
 }
@@ -499,8 +505,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .form-control:focus {
-  border-color: var(--hp-green);
-  box-shadow: 0 0 0 3px rgba(74, 168, 18, 0.15);
+  border-color: var(--hp-green-action);
+  box-shadow: 0 0 0 3px rgba(59, 134, 14, 0.2);
 }
 
 .btn {
@@ -514,25 +520,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-  background-color: var(--hp-green);
+  background-color: var(--hp-green-action);
   border: 0;
   padding: 10px 22px;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-  background-color: var(--hp-green-dark);
+  background-color: var(--hp-green-action-dark);
 }
 
 .btn-success {
-  background-color: var(--hp-green);
+  background-color: var(--hp-green-action);
   border: 0;
   padding: 8px 16px;
 }
 
 .btn-success:hover,
 .btn-success:focus {
-  background-color: var(--hp-green-dark);
+  background-color: var(--hp-green-action-dark);
 }
 
 .btn-info {
@@ -558,10 +564,11 @@ h1, h2, h3, h4, h5, h6 {
   border: none;
 }
 
-.contribute-box h3 {
+.contribute-box h2 {
   color: #fff;
   margin-bottom: 15px;
   font-weight: 600;
+  font-size: 1.7rem;
 }
 
 .contribute-box p {
@@ -571,12 +578,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .contribute-box .btn-primary {
-  background-color: var(--hp-green);
+  background-color: var(--hp-green-action);
 }
 
 .contribute-box .btn-primary:hover,
 .contribute-box .btn-primary:focus {
-  background-color: var(--hp-green-dark);
+  background-color: var(--hp-green-action-dark);
 }
 
 /* Featured Group Box */
@@ -781,4 +788,35 @@ h1, h2, h3, h4, h5, h6 {
    that legitimately use that sidebar layout. */
 #swagger-ui .wrapper::before {
   content: none;
+}
+
+/* Accessibility (WCAG 2.1 AA)
+   A single high-contrast focus style, since the default browser outline can
+   have poor contrast against our darker navy sections (WCAG 2.4.7 Focus
+   Visible, 1.4.11 Non-text Contrast). The white outline + navy halo pairing
+   keeps the focus ring clearly visible on both light and dark backgrounds. */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+.tag:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--hp-navy);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-box,
+  .showcase-box,
+  .btn,
+  .tag {
+    transition: none;
+  }
+
+  .feature-box:hover,
+  .showcase-box:hover {
+    transform: none;
+  }
 }

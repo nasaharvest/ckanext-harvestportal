@@ -3,7 +3,11 @@
 {% block subtitle %}{{ _('Harvest Portal') }}{% endblock %}
 
 {% block content %}
-  <div class="homepage">
+  {# CKAN's skip-to-content link targets #content, which core's page.html
+     normally provides around {% block content %} — since this template
+     replaces that block entirely, it has to supply the same id/landmark
+     itself or the skip link silently does nothing. #}
+  <div class="homepage" id="content" role="main">
     <!-- Hero -->
     <div class="hp-hero">
       <svg class="hero-orbit" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -38,20 +42,21 @@
       <div class="row search-section">
         <div class="col-md-12">
           <div class="search-card">
-            <h3>{{ _('Find Datasets') }}</h3>
+            <h2>{{ _('Find Datasets') }}</h2>
             {% set tags = h.get_facet_items_dict('tags', c.search_facets, limit=4) %}
             <form class="search-form" action="{% url_for controller='dataset', action='search' %}">
               <div class="input-group input-group-lg">
-                <input type="text" class="form-control" name="q" placeholder="{{ _('Search datasets...') }}">
+                <label for="hp-dataset-search-q" class="visually-hidden">{{ _('Search datasets') }}</label>
+                <input type="text" id="hp-dataset-search-q" class="form-control" name="q" placeholder="{{ _('Search datasets...') }}">
                 <span class="input-group-btn">
                   <button class="btn btn-primary" type="submit">
-                    <i class="fa fa-search"></i> {{ _('Search') }}
+                    <i class="fa fa-search" aria-hidden="true"></i> {{ _('Search') }}
                   </button>
                 </span>
               </div>
               {% if tags %}
                 <div class="tag-list">
-                  <h4>{{ _('Popular Tags') }}</h4>
+                  <h3>{{ _('Popular Tags') }}</h3>
                   {% for tag in tags %}
                     <a class="tag" href="{% url_for controller='dataset', action='search', tags=tag.name %}">{{ tag.display_name }}</a>
                   {% endfor %}
@@ -99,7 +104,7 @@
         <div class="col-md-4">
           <div class="feature-box">
             <span class="feature-step">{{ _('01 — Search') }}</span>
-            <i class="fa fa-database fa-4x feature-icon"></i>
+            <i class="fa fa-database fa-4x feature-icon" aria-hidden="true"></i>
             <h3>{{ _('Datasets') }}</h3>
             <p>{{ _('Access our catalog of agricultural and food system datasets from various sources including satellite imagery, crop data, and more.') }}</p>
             <a href="{% url_for controller='dataset', action='search' %}" class="btn btn-primary">
@@ -110,7 +115,7 @@
         <div class="col-md-4">
           <div class="feature-box">
             <span class="feature-step">{{ _('02 — Trace the source') }}</span>
-            <i class="fa fa-sitemap fa-4x feature-icon"></i>
+            <i class="fa fa-sitemap fa-4x feature-icon" aria-hidden="true"></i>
             <h3>{{ _('Data Providers') }}</h3>
             <p>{{ _('Find datasets by organizations contributing to global food security and agricultural monitoring.') }}</p>
             <a href="{% url_for controller='organization', action='index' %}" class="btn btn-primary">
@@ -121,7 +126,7 @@
         <div class="col-md-4">
           <div class="feature-box">
             <span class="feature-step">{{ _('03 — Go thematic') }}</span>
-            <i class="fa fa-folder-open fa-4x feature-icon"></i>
+            <i class="fa fa-folder-open fa-4x feature-icon" aria-hidden="true"></i>
             <h3>{{ _('Thematic Areas') }}</h3>
             <p>{{ _('Browse datasets organized by agricultural themes including crop production, food security, and climate impacts.') }}</p>
             <a href="{% url_for controller='group', action='index' %}" class="btn btn-primary">
@@ -142,38 +147,38 @@
       <div class="row showcase-section">
         <div class="col-md-4">
           <div class="showcase-box">
-            <i class="fa fa-line-chart fa-2x showcase-icon"></i>
+            <i class="fa fa-line-chart fa-2x showcase-icon" aria-hidden="true"></i>
             <h3>{{ _('Harvest2Market') }}</h3>
             <p>{{ _('Links satellite-based crop monitoring with market, trade, and food-security data to contextualize crop conditions within real-world supply chains.') }}</p>
             <a href="https://harvest2market.nasaharvest.org/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy">
-              {{ _('Visit Harvest2Market') }} <i class="fa fa-external-link"></i>
+              {{ _('Visit Harvest2Market') }} <i class="fa fa-external-link" aria-hidden="true"></i><span class="visually-hidden">{{ _('(opens in a new tab)') }}</span>
             </a>
           </div>
         </div>
         <div class="col-md-4">
           <div class="showcase-box">
-            <i class="fa fa-anchor fa-2x showcase-icon"></i>
+            <i class="fa fa-anchor fa-2x showcase-icon" aria-hidden="true"></i>
             <h3>{{ _('IGC Ports Dashboard') }}</h3>
             <p>{{ _('Tracks port congestion and connectivity for grain and oilseed shipments worldwide, built on Kpler shipping data.') }}</p>
             <a href="https://ports.harvestportal.org/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy">
-              {{ _('Visit Ports Dashboard') }} <i class="fa fa-external-link"></i>
+              {{ _('Visit Ports Dashboard') }} <i class="fa fa-external-link" aria-hidden="true"></i><span class="visually-hidden">{{ _('(opens in a new tab)') }}</span>
             </a>
           </div>
         </div>
         <div class="col-md-4">
           <div class="showcase-box">
-            <i class="fa fa-balance-scale fa-2x showcase-icon"></i>
+            <i class="fa fa-balance-scale fa-2x showcase-icon" aria-hidden="true"></i>
             <h3>{{ _('Yield Intercomparison Tool') }}</h3>
             <p>{{ _('Lets NASA Harvest scientists and partners compare crop yield models and datasets side by side.') }}</p>
             <a href="https://yield.harvestportal.org/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy">
-              {{ _('Visit Yield Tool') }} <i class="fa fa-external-link"></i>
+              {{ _('Visit Yield Tool') }} <i class="fa fa-external-link" aria-hidden="true"></i><span class="visually-hidden">{{ _('(opens in a new tab)') }}</span>
             </a>
           </div>
         </div>
       </div>
       <p class="showcase-api-link">
         {{ _('Building something new?') }}
-        <a href="{{ h.url_for('harvestportal.api_docs') }}">{{ _('See the Harvest Portal API docs') }} <i class="fa fa-arrow-right"></i></a>
+        <a href="{{ h.url_for('harvestportal.api_docs') }}">{{ _('See the Harvest Portal API docs') }} <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
       </p>
 
       <!-- Contribute Section -->
@@ -181,10 +186,10 @@
         <div class="row contribute-section">
           <div class="col-md-12 col-md-offset-1">
             <div class="contribute-box text-center">
-              <h3>{{ _('Contribute to the Harvest Portal') }}</h3>
+              <h2>{{ _('Contribute to the Harvest Portal') }}</h2>
               <p>{{ _('Help grow our collection by adding your own agricultural datasets to enhance global food security monitoring and decision-making.') }}</p>
               <a class="btn btn-primary btn-lg" href="{% url_for controller='dataset', action='new' %}">
-                <i class="fa fa-plus-circle"></i> {{ _('Add Dataset') }}
+                <i class="fa fa-plus-circle" aria-hidden="true"></i> {{ _('Add Dataset') }}
               </a>
             </div>
           </div>

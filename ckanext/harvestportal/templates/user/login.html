@@ -13,7 +13,7 @@ provider. #} {% block form %} {% block sso_form %}
 </p>
 <p>
   <a href="{{ h.url_for('user.login') }}/oidc-pkce" class="btn btn-primary"
-    ><i class="fa fa-sign-in"></i> Log in via single sign-on</a
+    ><i class="fa fa-sign-in" aria-hidden="true"></i> Log in via single sign-on</a
   >
 </p>
 {% endblock %} {% endblock %} {% block secondary_content %} {% endblock %}
