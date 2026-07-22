@@ -2,73 +2,47 @@
 
 {% block subtitle %}{{ _('Harvest Portal') }}{% endblock %}
 
-{% block styles %}
-  {{ super() }}
-  <style>
-    .aerial-background {
-      background-image: url('/img/usgs-JghLJ2xPNZ0-unsplash.jpg');
-      background-size: cover;
-      background-position: center;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      opacity: 0.7;
-      z-index: 1;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero-banner {
-      position: relative;
-      min-height: 500px;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-    }
-  </style>
-{% endblock %}
-
 {% block content %}
   <div class="homepage">
-    <!-- Hero Banner with NASA Harvest style -->
-    <div class="hero-banner">
-      <div class="aerial-background"></div>
-      <div class="hero-content">
-        <div class="hero-text">
-          
-          <h1 >{{ _('Welcome to the Harvest Portal') }}</h1>
-        </div>
-        <div class="hero-image"></div>
+    <!-- Hero -->
+    <div class="hp-hero">
+      <svg class="hero-orbit" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="hpOrbitGradient" x1="0%" y1="100%" x2="90%" y2="0%">
+            <stop offset="0%" stop-color="#4AA812" />
+            <stop offset="55%" stop-color="#1E6F66" />
+            <stop offset="100%" stop-color="#12395E" />
+          </linearGradient>
+        </defs>
+        <circle cx="320" cy="320" r="300" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+        <circle
+          cx="320" cy="320" r="260"
+          fill="none"
+          stroke="url(#hpOrbitGradient)"
+          stroke-width="14"
+          stroke-linecap="round"
+          stroke-dasharray="1300 334"
+          transform="rotate(-90 320 320)"
+        />
+        <circle cx="320" cy="60" r="22" fill="#12395E" />
+      </svg>
+      <div class="container hero-inner">
+        <p class="eyebrow">{{ _('NASA Harvest Consortium') }}</p>
+        <h1>{{ _('Welcome to the Harvest Portal') }}</h1>
+        <p class="hero-subtitle">{{ _('Searchable access to datasets, services, and metadata advancing satellite Earth observation for food security and environmental resiliency worldwide.') }}</p>
       </div>
     </div>
 
     <div class="container">
-      <!-- Impact Section -->
-      <div class="row">
-        <div class="col-md-12">
-          <div class="section-heading">
-            <h2>{{ _('What is the Harvest Portal?') }}</h2>
-          </div>
-          <div class="section-content">
-            <p>{{ _('Harvest Portal is the NASA Harvest Consortium\'s Data Repository for Agricultural Geospatial Data. Our mission is to enable and advance adoption of satellite Earth observations by public and private organizations to benefit food security, agriculture, and human and environmental resiliency in the US and worldwide. This Data Catalog provides searchable access to datasets, services, metadata, and data descriptions. Please contact the development team with any comments or suggestions about features or data.') }}</p>
-          </div>
-        </div>
-      </div>
-
       <!-- Search Section -->
       <div class="row search-section">
-        <div class="col-md-12 col-md-offset-1">
-          <div class="search-box">
+        <div class="col-md-12">
+          <div class="search-card">
             <h3>{{ _('Find Datasets') }}</h3>
             {% set tags = h.get_facet_items_dict('tags', c.search_facets, limit=4) %}
             <form class="search-form" action="{% url_for controller='dataset', action='search' %}">
               <div class="input-group input-group-lg">
-                <input type="text" class="form-control" name="q" placeholder="{{ _('Search agricultural datasets...') }}">
+                <input type="text" class="form-control" name="q" placeholder="{{ _('Search datasets...') }}">
                 <span class="input-group-btn">
                   <button class="btn btn-primary" type="submit">
                     <i class="fa fa-search"></i> {{ _('Search') }}
@@ -84,16 +58,49 @@
                 </div>
               {% endif %}
             </form>
+            {% set dataset_count = h.harvestportal_dataset_count() %}
+            {% set org_count = h.harvestportal_organization_count() %}
+            {% set group_count = h.harvestportal_group_count() %}
+            <div class="portal-stats">
+              <div class="portal-stat">
+                <span class="portal-stat-number">{{ dataset_count }}</span>
+                <span class="portal-stat-label">{{ _('Datasets') }}</span>
+              </div>
+              <div class="portal-stat">
+                <span class="portal-stat-number">{{ org_count }}</span>
+                <span class="portal-stat-label">{{ _('Organizations') }}</span>
+              </div>
+              <div class="portal-stat">
+                <span class="portal-stat-number">{{ group_count }}</span>
+                <span class="portal-stat-label">{{ _('Thematic Groups') }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Featured Section -->
-      <div class="row featured-section">
+      <!-- Impact Section -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="section-heading">
+            <h2>{{ _('What is the Harvest Portal?') }}</h2>
+          </div>
+          <div class="section-content">
+            <p>{{ _('The Harvest Portal is NASA Harvest\'s Data Repository and Distribution Platform. Our mission is to enable and advance adoption of satellite Earth observations by public and private organizations to benefit food security, agriculture, and human and environmental resiliency in the US and worldwide. This Data Catalog provides searchable access to datasets, services, metadata, and data descriptions. Please contact the development team with any comments or suggestions about features or data.') }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Section: a path through the portal, not three unrelated options -->
+      <div class="section-heading">
+        <h2>{{ _('Find your way') }}</h2>
+      </div>
+      <div class="row featured-section feature-path">
         <div class="col-md-4">
           <div class="feature-box">
+            <span class="feature-step">{{ _('01 — Search') }}</span>
             <i class="fa fa-database fa-4x feature-icon"></i>
-            <h3>{{ _('Agriculture Datasets') }}</h3>
+            <h3>{{ _('Datasets') }}</h3>
             <p>{{ _('Access our catalog of agricultural and food system datasets from various sources including satellite imagery, crop data, and more.') }}</p>
             <a href="{% url_for controller='dataset', action='search' %}" class="btn btn-primary">
               {{ _('Browse Datasets') }}
@@ -102,6 +109,7 @@
         </div>
         <div class="col-md-4">
           <div class="feature-box">
+            <span class="feature-step">{{ _('02 — Trace the source') }}</span>
             <i class="fa fa-sitemap fa-4x feature-icon"></i>
             <h3>{{ _('Data Providers') }}</h3>
             <p>{{ _('Find datasets by organizations contributing to global food security and agricultural monitoring.') }}</p>
@@ -112,6 +120,7 @@
         </div>
         <div class="col-md-4">
           <div class="feature-box">
+            <span class="feature-step">{{ _('03 — Go thematic') }}</span>
             <i class="fa fa-folder-open fa-4x feature-icon"></i>
             <h3>{{ _('Thematic Areas') }}</h3>
             <p>{{ _('Browse datasets organized by agricultural themes including crop production, food security, and climate impacts.') }}</p>
@@ -122,6 +131,46 @@
         </div>
       </div>
 
+
+      <!-- Showcase Section: applications built on the Harvest Portal API -->
+      <div class="section-heading">
+        <h2>{{ _('Applications Powered by the Harvest Portal') }}</h2>
+      </div>
+      <div class="section-content">
+        <p>{{ _('The Harvest Portal API feeds a growing set of tools built by NASA Harvest and partners — from market intelligence to shipping logistics to yield model validation.') }}</p>
+      </div>
+      <div class="row showcase-section">
+        <div class="col-md-4">
+          <div class="showcase-box">
+            <i class="fa fa-line-chart fa-2x showcase-icon"></i>
+            <h3>{{ _('Harvest2Market') }}</h3>
+            <p>{{ _('Links satellite-based crop monitoring with market, trade, and food-security data to contextualize crop conditions within real-world supply chains.') }}</p>
+            <a href="https://harvest2market.nasaharvest.org/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy">
+              {{ _('Visit Harvest2Market') }} <i class="fa fa-external-link"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="showcase-box">
+            <i class="fa fa-anchor fa-2x showcase-icon"></i>
+            <h3>{{ _('IGC Ports Dashboard') }}</h3>
+            <p>{{ _('Tracks port congestion and connectivity for grain and oilseed shipments worldwide, built on Kpler shipping data.') }}</p>
+            <a href="https://ports.harvestportal.org/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy">
+              {{ _('Visit Ports Dashboard') }} <i class="fa fa-external-link"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="showcase-box">
+            <i class="fa fa-balance-scale fa-2x showcase-icon"></i>
+            <h3>{{ _('Yield Intercomparison Tool') }}</h3>
+            <p>{{ _('Lets NASA Harvest scientists and partners compare crop yield models and datasets side by side.') }}</p>
+            <a href="https://yield.harvestportal.org/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy">
+              {{ _('Visit Yield Tool') }} <i class="fa fa-external-link"></i>
+            </a>
+          </div>
+        </div>
+      </div>
 
       <!-- Contribute Section -->
       {% if h.check_access('package_create') %}

@@ -6,3 +6,6 @@
     </a>
   </div>
 {% endblock %}
+ {% block header_account_notlogged %}
+<li><a href="{{ h.url_for('user.login') }}/oidc-pkce">Log in</a></li>
+{% endblock %}
