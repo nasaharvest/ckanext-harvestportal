@@ -69,7 +69,7 @@
             <div class="portal-stats">
               <div class="portal-stat">
                 <span class="portal-stat-number">{{ dataset_count }}</span>
-                <span class="portal-stat-label">{{ _('Datasets') }}</span>
+                <span class="portal-stat-label">{{ _('Public Datasets') }}</span>
               </div>
               <div class="portal-stat">
                 <span class="portal-stat-number">{{ org_count }}</span>
@@ -187,7 +187,7 @@
           <div class="col-md-12 col-md-offset-1">
             <div class="contribute-box text-center">
               <h2>{{ _('Contribute to the Harvest Portal') }}</h2>
-              <p>{{ _('Help grow our collection by adding your own agricultural datasets to enhance global food security monitoring and decision-making.') }}</p>
+              <p>{{ _('Help grow our collection by adding your own datasets to enhance global food security monitoring and decision-making.') }}</p>
               <a class="btn btn-primary btn-lg" href="{% url_for controller='dataset', action='new' %}">
                 <i class="fa fa-plus-circle" aria-hidden="true"></i> {{ _('Add Dataset') }}
               </a>

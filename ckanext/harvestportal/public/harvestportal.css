@@ -126,6 +126,18 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
 }
 
+/* Bootstrap's .row carries a -0.75rem negative margin on each side, meant
+   to be absorbed by the container's own 0.75rem padding (so column padding
+   recreates the gutter visually while the row's outer edge lines up with
+   the container). Since .homepage .container above sets padding to 0 for
+   full-bleed sections, that negative margin instead pushes every row 24px
+   wider than the viewport, forcing a horizontal scrollbar. Neutralize it
+   here — column-to-column gutters (from column padding) are unaffected. */
+.homepage .container > .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
 /* Hero
    Named .hp-hero (not .hero) because CKAN core's main.css defines
    ".homepage .hero { background: url(background-tile.png) }" which,
