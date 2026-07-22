@@ -471,6 +471,24 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 4px;
 }
 
+.showcase-api-link {
+  text-align: center;
+  margin: -20px 0 60px;
+  color: var(--hp-text-muted);
+  font-size: 14.5px;
+}
+
+.showcase-api-link a {
+  color: var(--hp-teal);
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.showcase-api-link .fa-arrow-right {
+  font-size: 12px;
+  margin-left: 2px;
+}
+
 /* Input and Button Styling */
 .form-control {
   border: 1px solid #dde1e4;
@@ -714,4 +732,53 @@ h1, h2, h3, h4, h5, h6 {
   .feature-box {
     padding: 24px 18px;
   }
+}
+
+/* API Docs page */
+.api-docs-page {
+  background-color: var(--hp-bg);
+  padding-bottom: 40px;
+}
+
+.api-docs-intro {
+  max-width: 900px;
+  padding: 44px 30px 0;
+}
+
+.api-docs-intro h1 {
+  color: var(--hp-navy);
+  font-size: 2.1rem;
+  margin-bottom: 16px;
+}
+
+.api-docs-intro p {
+  color: var(--hp-text-muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.api-docs-intro a {
+  color: var(--hp-teal);
+  font-weight: 600;
+}
+
+#swagger-ui {
+  max-width: 1100px;
+  margin: 30px auto 0;
+  padding: 0 30px;
+}
+
+.swagger-ui .topbar {
+  display: none;
+}
+
+/* CKAN core's unscoped ".wrapper:before" rule draws a 25%-width sidebar
+   divider on ANY element with class="wrapper", meant for its own
+   primary/secondary page layout. Swagger UI's own bundle renders internal
+   <div class="wrapper"> elements at runtime (for centering/max-width) that
+   incidentally match the same selector, so the divider shows up inside the
+   API sections. Scoped to #swagger-ui so it doesn't affect real CKAN pages
+   that legitimately use that sidebar layout. */
+#swagger-ui .wrapper::before {
+  content: none;
 }

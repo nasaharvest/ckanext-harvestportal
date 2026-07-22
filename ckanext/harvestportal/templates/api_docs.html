@@ -1,0 +1,36 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _('API Documentation') }}{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="/vendor/swagger-ui/swagger-ui.css" />
+{% endblock %}
+
+{% block content %}
+  <div class="api-docs-page">
+    <div class="container api-docs-intro">
+      <h1>{{ _('Harvest Portal API') }}</h1>
+      <p>{{ _('This page documents the read-only dataset search, metadata, and DataStore query endpoints available on the Harvest Portal. Write, account, and administrative actions are intentionally not documented here.') }}</p>
+      <p>
+        {{ _('For the complete CKAN Action API and DataStore API reference — including authentication and write operations — see the') }}
+        <a href="https://docs.ckan.org/en/latest/api/index.html" target="_blank" rel="noopener noreferrer">{{ _('official CKAN API Guide') }}</a>
+        {{ _('and the') }}
+        <a href="https://docs.ckan.org/en/latest/maintaining/datastore.html" target="_blank" rel="noopener noreferrer">{{ _('DataStore API reference') }}</a>.
+      </p>
+    </div>
+    <div id="swagger-ui" class="container"></div>
+    <script src="/vendor/swagger-ui/swagger-ui-bundle.js"></script>
+    <script>
+      window.addEventListener('DOMContentLoaded', function () {
+        window.ui = SwaggerUIBundle({
+          url: '/openapi/harvest-portal-api.json',
+          dom_id: '#swagger-ui',
+          deepLinking: true,
+          presets: [SwaggerUIBundle.presets.apis],
+          layout: 'BaseLayout'
+        });
+      });
+    </script>
+  </div>
+{% endblock %}

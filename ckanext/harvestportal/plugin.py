@@ -4,7 +4,7 @@ import ckan.plugins.toolkit as toolkit
 
 # import ckanext.harvestportal.cli as cli
 import ckanext.harvestportal.helpers as helpers
-# import ckanext.harvestportal.views as views
+import ckanext.harvestportal.views as views
 # from ckanext.harvestportal.logic import (
 #     action, auth, validators
 # )
@@ -15,7 +15,7 @@ class HarvestportalPlugin(plugins.SingletonPlugin):
 
     # plugins.implements(plugins.IAuthFunctions)
     # plugins.implements(plugins.IActions)
-    # plugins.implements(plugins.IBlueprint)
+    plugins.implements(plugins.IBlueprint)
     # plugins.implements(plugins.IClick)
     plugins.implements(plugins.ITemplateHelpers)
     # plugins.implements(plugins.IValidators)
@@ -78,8 +78,8 @@ class HarvestportalPlugin(plugins.SingletonPlugin):
 
     # IBlueprint
 
-    # def get_blueprint(self):
-    #     return views.get_blueprints()
+    def get_blueprint(self):
+        return views.get_blueprints()
 
     # IClick
 

@@ -171,6 +171,10 @@
           </div>
         </div>
       </div>
+      <p class="showcase-api-link">
+        {{ _('Building something new?') }}
+        <a href="{{ h.url_for('harvestportal.api_docs') }}">{{ _('See the Harvest Portal API docs') }} <i class="fa fa-arrow-right"></i></a>
+      </p>
 
       <!-- Contribute Section -->
       {% if h.check_access('package_create') %}

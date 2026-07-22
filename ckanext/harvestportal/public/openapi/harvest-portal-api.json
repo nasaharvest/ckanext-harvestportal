@@ -1,0 +1,195 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Harvest Portal API",
+    "version": "3.0.0",
+    "description": "Read-only endpoints for searching and retrieving agricultural geospatial datasets, organizations, groups, and DataStore records from the Harvest Portal. This is a curated subset of the CKAN Action API covering public, anonymous-accessible read operations only — dataset/resource creation, updates, and deletes, and any account or administrative actions, are intentionally not documented here. See the official CKAN API Guide and DataStore API reference (linked on this page) for the complete action set, authentication, and write operations."
+  },
+  "servers": [
+    { "url": "/api/3/action", "description": "Harvest Portal" }
+  ],
+  "tags": [
+    { "name": "Datasets", "description": "Search and read dataset (package) metadata." },
+    { "name": "Resources", "description": "Read individual resource metadata." },
+    { "name": "Organizations", "description": "List and read publishing organizations." },
+    { "name": "Groups", "description": "List and read thematic groups." },
+    { "name": "Tags", "description": "List tags used across datasets." },
+    { "name": "DataStore", "description": "Query tabular data loaded into the CKAN DataStore." }
+  ],
+  "paths": {
+    "/package_search": {
+      "get": {
+        "tags": ["Datasets"],
+        "summary": "Search datasets",
+        "description": "Searches for datasets matching a query, with optional filtering, sorting, and pagination.",
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string" }, "description": "Solr query string, e.g. crop yield" },
+          { "name": "fq", "in": "query", "schema": { "type": "string" }, "description": "Filter query, e.g. organization:nasa-harvest" },
+          { "name": "sort", "in": "query", "schema": { "type": "string" }, "description": "Sort order, e.g. metadata_modified desc" },
+          { "name": "rows", "in": "query", "schema": { "type": "integer", "default": 10 }, "description": "Number of results to return" },
+          { "name": "start", "in": "query", "schema": { "type": "integer", "default": 0 }, "description": "Result offset for pagination" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/package_show": {
+      "get": {
+        "tags": ["Datasets"],
+        "summary": "Get a dataset",
+        "description": "Returns the full metadata for a single dataset.",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Dataset name or ID" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dataset metadata",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/resource_show": {
+      "get": {
+        "tags": ["Resources"],
+        "summary": "Get a resource",
+        "description": "Returns metadata for a single resource (a file, API, or other data source attached to a dataset).",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Resource ID" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource metadata",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/organization_list": {
+      "get": {
+        "tags": ["Organizations"],
+        "summary": "List organizations",
+        "description": "Returns the list of organizations publishing data on the portal.",
+        "parameters": [
+          { "name": "sort", "in": "query", "schema": { "type": "string" }, "description": "Field to sort by, e.g. name asc" },
+          { "name": "all_fields", "in": "query", "schema": { "type": "boolean", "default": false }, "description": "Return full organization details instead of just names" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" }, "description": "Maximum number of organizations to return" },
+          { "name": "offset", "in": "query", "schema": { "type": "integer" }, "description": "Offset for pagination" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of organizations",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/organization_show": {
+      "get": {
+        "tags": ["Organizations"],
+        "summary": "Get an organization",
+        "description": "Returns details for a single organization, optionally including its datasets.",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Organization name or ID" },
+          { "name": "include_datasets", "in": "query", "schema": { "type": "boolean", "default": false }, "description": "Include the organization's datasets in the response" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization details",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/group_list": {
+      "get": {
+        "tags": ["Groups"],
+        "summary": "List thematic groups",
+        "description": "Returns the list of thematic groups datasets can belong to.",
+        "parameters": [
+          { "name": "sort", "in": "query", "schema": { "type": "string" }, "description": "Field to sort by, e.g. name asc" },
+          { "name": "all_fields", "in": "query", "schema": { "type": "boolean", "default": false }, "description": "Return full group details instead of just names" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" }, "description": "Maximum number of groups to return" },
+          { "name": "offset", "in": "query", "schema": { "type": "integer" }, "description": "Offset for pagination" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of groups",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/group_show": {
+      "get": {
+        "tags": ["Groups"],
+        "summary": "Get a group",
+        "description": "Returns details for a single thematic group, optionally including its datasets.",
+        "parameters": [
+          { "name": "id", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Group name or ID" },
+          { "name": "include_datasets", "in": "query", "schema": { "type": "boolean", "default": false }, "description": "Include the group's datasets in the response" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group details",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/tag_list": {
+      "get": {
+        "tags": ["Tags"],
+        "summary": "List tags",
+        "description": "Returns tags used across datasets on the portal.",
+        "parameters": [
+          { "name": "query", "in": "query", "schema": { "type": "string" }, "description": "Only return tags matching this substring" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tags",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/datastore_search": {
+      "get": {
+        "tags": ["DataStore"],
+        "summary": "Query a resource's DataStore table",
+        "description": "Searches the tabular data loaded into the DataStore for a given resource. Only works for resources that have been loaded into the DataStore (most CSV/XLSX resources on this portal).",
+        "parameters": [
+          { "name": "resource_id", "in": "query", "required": true, "schema": { "type": "string" }, "description": "ID of the DataStore-enabled resource" },
+          { "name": "q", "in": "query", "schema": { "type": "string" }, "description": "Full-text search across all fields" },
+          { "name": "filters", "in": "query", "schema": { "type": "string" }, "description": "JSON object of field:value filters, e.g. {\"country\":\"Kenya\"}" },
+          { "name": "fields", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated list of fields to return" },
+          { "name": "sort", "in": "query", "schema": { "type": "string" }, "description": "Field(s) to sort by, e.g. year desc" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 100 }, "description": "Maximum number of records to return" },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "default": 0 }, "description": "Offset for pagination" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching DataStore records",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ActionResponse" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ActionResponse": {
+        "type": "object",
+        "properties": {
+          "help": { "type": "string", "description": "URL to this action's help text" },
+          "success": { "type": "boolean" },
+          "result": { "description": "Action-specific result payload" }
+        }
+      }
+    }
+  }
+}
