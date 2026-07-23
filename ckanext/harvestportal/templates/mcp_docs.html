@@ -1,0 +1,63 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _('Connect an AI Assistant (MCP)') }}{% endblock %}
+
+{% block content %}
+  {# See home/index.html for why #content/role=main are set explicitly here:
+     this template replaces {% block content %} entirely, which is where
+     core's page.html normally provides the skip-link target. #}
+  <div class="mcp-docs-page" id="content" role="main">
+    <div class="container api-docs-intro">
+      <h1>{{ _('Connect an AI Assistant to the Harvest Portal') }}</h1>
+      <p>{{ _('The Harvest Portal MCP server lets AI chat assistants — Claude, ChatGPT, Perplexity, or any other MCP-compatible client — search datasets, read metadata, and query DataStore tables on your behalf. It works with any MCP client that supports remote HTTP servers.') }}</p>
+      <p>
+        {{ _('Server URL:') }}
+        <code>https://mcp.harvestportal.org/mcp</code>
+      </p>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="well">
+            <h2>{{ _('Option 1 — Public data, no setup') }}</h2>
+            <p>{{ _('Use this if you just want to search and browse public Harvest Portal datasets, with nothing to configure.') }}</p>
+            <ol>
+              <li>{{ _('In your AI assistant, find its connector/plugin settings and add a custom remote MCP server with the URL above.') }}</li>
+              <li>{{ _('Authentication:') }} <strong>{{ _('None') }}</strong></li>
+              <li>{{ _('You can search datasets, read metadata, and query DataStore tables for anything public — not private datasets or restricted organizations.') }}</li>
+            </ol>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="well">
+            <h2>{{ _('Option 2 — Your own Harvest Portal account') }}</h2>
+            <p>{{ _('Use this if you want the assistant to see everything your Harvest Portal account can see, including private datasets and restricted organizations.') }}</p>
+            <ol>
+              <li>
+                {{ _('Log into your account, go to your profile') }} &rarr;
+                <strong>{{ _('Manage') }}</strong> &rarr; <strong>{{ _('API Tokens') }}</strong>,
+                {{ _('and create one. Copy it somewhere safe.') }}
+              </li>
+              <li>
+                {{ _('Add the same server URL, but set authentication to') }}
+                <strong>{{ _('API key') }}</strong> {{ _('(or "Request headers", depending on the client).') }}
+                {{ _('If the client lets you name the header, use') }} <code>X-CKAN-API-Token</code>.
+                {{ _('If it only offers a generic API key/bearer token field, that works too — the server also accepts the standard') }}
+                <code>Authorization</code> {{ _('header.') }}
+              </li>
+              <li>{{ _('You now see everything your Harvest Portal account can see, exactly as if you were logged in directly.') }}</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-heading" >
+        <h2>{{ _('Connecting from your assistant') }}</h2>
+      </div>
+      <div class="section-content">
+        <p>{{ _('Steps for adding a custom or remote MCP connector vary by product and change often — check your AI assistant\'s own documentation for the current instructions on adding one and configuring authentication.') }}</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

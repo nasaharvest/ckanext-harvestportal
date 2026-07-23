@@ -69,7 +69,7 @@
             <div class="portal-stats">
               <div class="portal-stat">
                 <span class="portal-stat-number">{{ dataset_count }}</span>
-                <span class="portal-stat-label">{{ _('Public Datasets') }}</span>
+                <span class="portal-stat-label">{{ _('Datasets Available to You') if g.user else _('Public Datasets') }}</span>
               </div>
               <div class="portal-stat">
                 <span class="portal-stat-number">{{ org_count }}</span>
@@ -176,10 +176,35 @@
           </div>
         </div>
       </div>
-      <p class="showcase-api-link">
-        {{ _('Building something new?') }}
-        <a href="{{ h.url_for('harvestportal.api_docs') }}">{{ _('See the Harvest Portal API docs') }} <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
-      </p>
+      <!-- Developer Section: build directly on the API, or connect an AI assistant via MCP -->
+      <div class="section-heading">
+        <h2>{{ _('Build on the Harvest Portal') }}</h2>
+      </div>
+      <div class="section-content">
+        <p>{{ _('Query datasets programmatically, or connect an AI assistant directly to the catalog — both read-only, and both scoped to your own Harvest Portal account\'s permissions.') }}</p>
+      </div>
+      <div class="row showcase-section">
+        <div class="col-md-6">
+          <div class="showcase-box">
+            <i class="fa fa-code fa-2x showcase-icon showcase-icon-navy" aria-hidden="true"></i>
+            <h3>{{ _('API & Documentation') }}</h3>
+            <p>{{ _('Search, read, and query datasets directly with the read-only Harvest Portal API — full reference and a live try-it-out console.') }}</p>
+            <a href="{{ h.url_for('harvestportal.api_docs') }}" class="btn btn-navy">
+              {{ _('See the API docs') }} <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="showcase-box">
+            <i class="fa fa-comments fa-2x showcase-icon showcase-icon-navy" aria-hidden="true"></i>
+            <h3>{{ _('Connect an AI Assistant (MCP)') }}</h3>
+            <p>{{ _('Ask Claude, ChatGPT, Perplexity, or any MCP-compatible assistant to search and explore Harvest Portal datasets for you.') }}</p>
+            <a href="{{ h.url_for('harvestportal.mcp_docs') }}" class="btn btn-navy">
+              {{ _('See MCP setup') }} <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
 
       <!-- Contribute Section -->
       {% if h.check_access('package_create') %}

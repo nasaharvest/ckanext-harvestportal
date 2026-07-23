@@ -16,6 +16,7 @@
   --hp-green-action: #3B860E;
   --hp-green-action-dark: #316F0C;
   --hp-teal: #1E6F66;
+  --hp-navy-tint: #E5EAF0;
   --hp-bg: #F7F8F5;
   --hp-white: #FFFFFF;
   --hp-text: #22262B;
@@ -457,6 +458,11 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 18px;
 }
 
+.showcase-icon-navy {
+  background-color: var(--hp-navy-tint);
+  color: var(--hp-navy) !important;
+}
+
 .showcase-box h3 {
   color: var(--hp-navy);
   margin-bottom: 10px;
@@ -487,6 +493,19 @@ h1, h2, h3, h4, h5, h6 {
 .btn-outline-navy .fa-external-link {
   font-size: 12px;
   margin-left: 4px;
+}
+
+.btn-navy {
+  background-color: var(--hp-navy);
+  border: 0;
+  color: #fff;
+  padding: 9px 18px;
+}
+
+.btn-navy:hover,
+.btn-navy:focus {
+  background-color: var(--hp-navy-deep);
+  color: #fff;
 }
 
 .showcase-api-link {
@@ -781,6 +800,14 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
+.mcp-docs-page .api-docs-intro {
+  padding-bottom: 20px;
+}
+
+.mcp-docs-page .row {
+  margin-bottom: 40px;
+}
+
 #swagger-ui {
   max-width: 1100px;
   margin: 30px auto 0;
@@ -788,6 +815,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .swagger-ui .topbar {
+  display: none;
+}
+
+/* The scheme-container holds a server dropdown (for multi-server specs)
+   and an "Authorize" button (for specs with a security scheme). Our spec
+   has exactly one server and no auth, so it renders as an empty padded
+   bar with nothing actually interactive in it. */
+.swagger-ui .scheme-container {
   display: none;
 }
 

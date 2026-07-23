@@ -1,5 +1,9 @@
 {% ckan_extends %} {# Adds a link from the login form to the single sign-on
-provider. #} {% block form %} {% block sso_form %}
+provider — except in dev environments (ckanext.harvestportal.use_sso_login =
+false), where the default username/password form is used instead. #}
+{% block form %}
+{% if h.harvestportal_use_sso_login() %}
+{% block sso_form %}
 <h4>{% trans %}Note for existing users:{% endtrans %}</h4>
 <p>
   {% trans %} If you have not already, please follow this link to the new
@@ -16,4 +20,8 @@ provider. #} {% block form %} {% block sso_form %}
     ><i class="fa fa-sign-in" aria-hidden="true"></i> Log in via single sign-on</a
   >
 </p>
-{% endblock %} {% endblock %} {% block secondary_content %} {% endblock %}
+{% endblock %}
+{% else %}
+{{ super() }}
+{% endif %}
+{% endblock %} {% block secondary_content %} {% endblock %}

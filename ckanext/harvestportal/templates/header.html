@@ -7,5 +7,20 @@
   </div>
 {% endblock %}
  {% block header_account_notlogged %}
+{% if h.harvestportal_use_sso_login() %}
 <li><a href="{{ h.url_for('user.login') }}/oidc-pkce">Log in</a></li>
+{% else %}
+<li><a href="{{ h.url_for('user.login') }}">Log in</a></li>
+{% endif %}
+{% endblock %}
+{% block header_site_navigation_tabs %}
+  {% set org_type = h.default_group_type('organization') %}
+  {% set group_type = h.default_group_type('group') %}
+  {{ h.build_nav_main(
+    (dataset_type ~ '.search', h.humanize_entity_type('package', dataset_type, 'main nav') or _('Datasets'), ["dataset", "resource"]),
+    (org_type ~ '.index', h.humanize_entity_type('organization', org_type, 'main nav') or _('Organizations'), ['organization']),
+    (group_type ~ '.index', h.humanize_entity_type('group', group_type, 'main nav') or _('Groups'), ['group']),
+    ('harvestportal.api_docs', _('API')),
+    ('harvestportal.mcp_docs', _('AI'))
+  ) }}
 {% endblock %}
