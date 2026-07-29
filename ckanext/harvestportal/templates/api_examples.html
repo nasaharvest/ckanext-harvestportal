@@ -1,0 +1,126 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _('API Examples') }}{% endblock %}
+
+{% block content %}
+  {# See home/index.html for why #content/role=main are set explicitly here:
+     this template replaces {% block content %} entirely, which is where
+     core's page.html normally provides the skip-link target. #}
+  <div class="api-docs-page" id="content" role="main">
+    <div class="container api-docs-intro">
+      <h1>{{ _('Harvest Portal API Examples') }}</h1>
+      <p>
+        {{ _('This page collects copy-paste examples for common tasks. For an explanation of the underlying concepts - the DataStore, which file formats support it, and authentication - see the') }}
+        <a href="{{ h.url_for('harvestportal.api_docs') }}">{{ _('Harvest Portal API documentation') }}</a>.
+        {{ _('Replace') }} <code>RESOURCE_ID</code>, <code>DATASET_ID</code>, {{ _('and') }} <code>YOUR_API_TOKEN</code> {{ _('with real values throughout.') }}
+      </p>
+
+      <h2>{{ _('cURL') }}</h2>
+      <p>{{ _('Quick reference for testing from a terminal.') }}</p>
+      <pre><code># Search public datasets
+curl "https://data.harvestportal.org/api/3/action/package_search?q=maize&amp;rows=5"
+
+# Search including datasets your account can access
+curl "https://data.harvestportal.org/api/3/action/package_search?rows=5" \
+  -H "Authorization: YOUR_API_TOKEN"
+
+# Get a single dataset's full metadata, including its resources
+curl "https://data.harvestportal.org/api/3/action/package_show?id=DATASET_ID"
+
+# Query rows from a resource loaded into the DataStore, filtered to an exact value
+curl -X POST "https://data.harvestportal.org/api/3/action/datastore_search" \
+  -H "Content-Type: application/json" \
+  -d '{"resource_id": "RESOURCE_ID", "filters": {"country": "Kenya"}, "limit": 10}'</code></pre>
+
+      <h2>{{ _('JavaScript') }}</h2>
+
+      <h3>{{ _('Search datasets') }}</h3>
+      <pre><code>// Public datasets - no token needed
+const res = await fetch(
+  'https://data.harvestportal.org/api/3/action/package_search?q=maize&amp;rows=5'
+);
+const { result } = await res.json();
+console.log(result.results);</code></pre>
+
+      <h3>{{ _('Get a single dataset’s metadata and resources') }}</h3>
+      <pre><code>const res = await fetch(
+  'https://data.harvestportal.org/api/3/action/package_show?id=DATASET_ID'
+);
+const { result: dataset } = await res.json();
+console.log(dataset.resources);</code></pre>
+
+      <h3>{{ _('Query rows from a resource in the DataStore') }}</h3>
+      <pre><code>const res = await fetch(
+  'https://data.harvestportal.org/api/3/action/datastore_search',
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'YOUR_API_TOKEN' // omit for public-only access
+    },
+    body: JSON.stringify({
+      resource_id: 'RESOURCE_ID',
+      filters: { country: 'Kenya' },
+      limit: 10
+    })
+  }
+);
+const { result } = await res.json();
+console.log(result.records);</code></pre>
+
+      <h3>{{ _('Download a resource file directly') }}</h3>
+      <pre><code>const res = await fetch(
+  'https://data.harvestportal.org/dataset/DATASET_ID/resource/RESOURCE_ID/download/FILENAME'
+);
+const blob = await res.blob();</code></pre>
+
+      <h3>{{ _('Query a Parquet resource directly in the browser') }}</h3>
+      <p>{{ _('For file formats the DataStore does not support, such as Parquet, a Parquet-aware library can read the file directly using the same download URL. For example, with') }} <a href="https://github.com/hyparam/hyparquet" target="_blank" rel="noopener noreferrer">hyparquet<span class="visually-hidden">{{ _('(opens in a new tab)') }}</span></a>:</p>
+      <pre><code>const { asyncBufferFromUrl, parquetReadObjects } =
+  await import('https://cdn.jsdelivr.net/npm/hyparquet/src/hyparquet.min.js');
+
+const url = 'https://data.harvestportal.org/dataset/DATASET_ID/resource/RESOURCE_ID/download/FILENAME';
+const file = await asyncBufferFromUrl({ url });
+const rows = await parquetReadObjects({ file });
+console.log(rows.slice(0, 10));</code></pre>
+
+      <h2>{{ _('Python (ckanapi)') }}</h2>
+
+      <h3>{{ _('Search datasets') }}</h3>
+      <pre><code>from ckanapi import RemoteCKAN
+
+# Public datasets - no token needed
+ckan = RemoteCKAN('https://data.harvestportal.org')
+results = ckan.action.package_search(q='maize', rows=5)</code></pre>
+
+      <h3>{{ _('Get a single dataset’s metadata and resources') }}</h3>
+      <pre><code>dataset = ckan.action.package_show(id='DATASET_ID')
+for resource in dataset['resources']:
+    print(resource['id'], resource['name'], resource['datastore_active'])</code></pre>
+
+      <h3>{{ _('Query rows from a resource in the DataStore') }}</h3>
+      <pre><code># With a token, to also see datasets your account can access
+ckan = RemoteCKAN('https://data.harvestportal.org', apikey='YOUR_API_TOKEN')
+result = ckan.action.datastore_search(
+    resource_id='RESOURCE_ID', filters={'country': 'Kenya'}, limit=10
+)
+print(result['records'])</code></pre>
+
+      <h3>{{ _('Download a resource file directly') }}</h3>
+      <pre><code>import requests
+
+resource = ckan.action.resource_show(id='RESOURCE_ID')
+response = requests.get(resource['url'])
+with open('downloaded_file', 'wb') as f:
+    f.write(response.content)</code></pre>
+
+      <h3>{{ _('Query a Parquet resource without downloading it first') }}</h3>
+      <p>{{ _('Loading a columnar format such as Parquet into the DataStore would negate its principal advantages. Instead, a Parquet-aware tool can read the resource’s download URL directly. DuckDB, for example, can query a Parquet file over HTTP using range requests, without downloading the file in its entirety:') }}</p>
+      <pre><code>import duckdb
+
+resource = ckan.action.resource_show(id='RESOURCE_ID')
+duckdb.sql(f"SELECT * FROM read_parquet('{resource['url']}') LIMIT 10").show()</code></pre>
+      <p>{{ _('pandas with pyarrow, and Polars, are also capable of reading the same URL directly.') }}</p>
+    </div>
+  </div>
+{% endblock %}

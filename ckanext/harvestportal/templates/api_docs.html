@@ -14,12 +14,36 @@
   <div class="api-docs-page" id="content" role="main">
     <div class="container api-docs-intro">
       <h1>{{ _('Harvest Portal API') }}</h1>
-      <p>{{ _('This page documents the read-only dataset search, metadata, and DataStore query endpoints available on the Harvest Portal. Write, account, and administrative actions are intentionally not documented here.') }}</p>
       <p>
-        {{ _('For the complete CKAN Action API and DataStore API reference — including authentication and write operations — see the') }}
-        <a href="https://docs.ckan.org/en/latest/api/index.html" target="_blank" rel="noopener noreferrer">{{ _('official CKAN API Guide') }}<span class="visually-hidden">{{ _('(opens in a new tab)') }}</span></a>
-        {{ _('and the') }}
+        {{ _('This page describes how to search datasets, retrieve file details, and extract data directly from spreadsheet-format files through the Harvest Portal API. Write, account, and administrative actions are intentionally excluded from this documentation. For copy-paste JavaScript, Python, and cURL code samples, see the') }}
+        <a href="{{ h.url_for('harvestportal.api_examples') }}">{{ _('API Examples page') }}</a>.
+      </p>
+      <p>
+        {{ _('The Harvest Portal is built on an open-source data catalog platform called CKAN. For the complete technical reference covering everything the underlying platform supports, including write operations not covered here, consult the official') }}
+        <a href="https://docs.ckan.org/en/latest/api/index.html" target="_blank" rel="noopener noreferrer">{{ _('CKAN API Guide') }}<span class="visually-hidden">{{ _('(opens in a new tab)') }}</span></a>
+        {{ _('and') }}
         <a href="https://docs.ckan.org/en/latest/maintaining/datastore.html" target="_blank" rel="noopener noreferrer">{{ _('DataStore API reference') }}<span class="visually-hidden">{{ _('(opens in a new tab)') }}</span></a>.
+      </p>
+
+      <h2>{{ _('Searchable Files and Download-Only Files') }}</h2>
+      <p>{{ _('Each dataset consists of one or more files, referred to on the Harvest Portal as "resources." Most resources are available only as direct downloads. When a resource is a spreadsheet-format file, however, Harvest Portal automatically loads it into a searchable table referred to as the "DataStore." Once a resource has been loaded into the DataStore, it can be searched, filtered, and queried for specific rows and columns through the API, without downloading the entire file.') }}</p>
+      <p>{{ _('On the Harvest Portal, this automatic processing currently applies to the following spreadsheet formats:') }}</p>
+      <ul>
+        <li>{{ _('CSV') }}</li>
+        <li>{{ _('XLS and XLSX (Excel)') }}</li>
+        <li>{{ _('TSV') }}</li>
+        <li>{{ _('ODS (OpenDocument Spreadsheet)') }}</li>
+      </ul>
+      <p>{{ _('To determine whether a given resource has been processed in this way, view its page on the site; a processed resource displays a data preview table. Programmatically, this can be confirmed by checking the') }} <code>datastore_active</code> {{ _('field returned by the') }} <code>resource_show</code> {{ _('action (see the API Examples page for code samples).') }}</p>
+      <p>{{ _('All other formats, including Parquet, GeoTIFF, shapefiles, and JSON, are not processed into the DataStore and are available only as direct downloads through this API. Such files can still be queried efficiently using other tools; the API Examples page includes a Parquet example demonstrating this.') }}</p>
+
+      <h2>{{ _('Authentication and Private Datasets') }}</h2>
+      <p>{{ _('Requests made without credentials return only public datasets. To access datasets belonging to organizations associated with your account, including private datasets, generate an API token from your profile under') }} <strong>{{ _('Manage') }}</strong> &rarr; <strong>{{ _('API Tokens') }}</strong>, {{ _('and include it in the') }} <code>Authorization</code> {{ _('header of each request. This token should be kept confidential, as anyone in possession of it can act on behalf of your account.') }}</p>
+
+      <h2>{{ _('Code Examples') }}</h2>
+      <p>
+        {{ _('The') }} <a href="{{ h.url_for('harvestportal.api_examples') }}">{{ _('API Examples page') }}</a>
+        {{ _('has copy-paste cURL, JavaScript, and Python examples covering dataset search, DataStore queries, direct file downloads, and querying Parquet files without loading them into the DataStore.') }}
       </p>
     </div>
     <div id="swagger-ui" class="container"></div>

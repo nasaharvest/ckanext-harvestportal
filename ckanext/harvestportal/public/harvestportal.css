@@ -800,6 +800,38 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
+.api-docs-intro h2 {
+  color: var(--hp-navy);
+  font-size: 1.5rem;
+  margin-top: 40px;
+  margin-bottom: 12px;
+}
+
+.api-docs-intro h3 {
+  color: var(--hp-navy);
+  font-size: 1.1rem;
+  margin-top: 26px;
+  margin-bottom: 8px;
+}
+
+.api-docs-intro pre {
+  background-color: var(--hp-navy-deep);
+  color: #E8ECF0;
+  padding: 18px 20px;
+  border-radius: var(--hp-radius-md);
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin: 12px 0 28px;
+}
+
+.api-docs-intro pre code {
+  font-family: 'Menlo', 'Consolas', monospace;
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+
 .mcp-docs-page .api-docs-intro {
   padding-bottom: 20px;
 }
