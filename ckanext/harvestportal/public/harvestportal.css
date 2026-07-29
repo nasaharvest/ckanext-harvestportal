@@ -166,7 +166,7 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   z-index: 1;
   max-width: 620px;
-  padding-left: 30px;
+  padding: 0 30px;
 }
 
 .hp-hero .eyebrow {
@@ -306,6 +306,7 @@ h1, h2, h3, h4, h5, h6 {
 .section-heading {
   text-align: center;
   margin-bottom: 30px;
+  padding: 0 30px;
   color: var(--hp-text);
 }
 
@@ -321,6 +322,7 @@ h1, h2, h3, h4, h5, h6 {
 .section-content {
   max-width: 900px;
   margin: 0 auto;
+  padding: 0 30px;
   text-align: center;
   font-size: 16px;
   line-height: 1.8;
@@ -709,7 +711,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .hp-hero .hero-inner {
-    padding-left: 0;
+    padding: 0 20px;
   }
 
   .hp-hero h1 {
