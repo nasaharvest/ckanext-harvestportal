@@ -3,6 +3,7 @@ import ckan.plugins.toolkit as toolkit
 
 
 # import ckanext.harvestportal.cli as cli
+import ckanext.harvestportal.compress as compress
 import ckanext.harvestportal.helpers as helpers
 import ckanext.harvestportal.views as views
 # from ckanext.harvestportal.logic import (
@@ -18,7 +19,20 @@ class HarvestportalPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IBlueprint)
     # plugins.implements(plugins.IClick)
     plugins.implements(plugins.ITemplateHelpers)
+    plugins.implements(plugins.IMiddleware)
     # plugins.implements(plugins.IValidators)
+
+    # IMiddleware
+
+    def make_middleware(self, app, config):
+        # Response compression can be turned off without a rebuild by setting
+        # CKANEXT__HARVESTPORTAL__COMPRESS=false in the task definition.
+        if toolkit.asbool(config.get("ckanext.harvestportal.compress", True)):
+            compress.init_compress(app)
+        return app
+
+    def make_error_log_middleware(self, app, config):
+        return app
 
     # IConfigurer
 
