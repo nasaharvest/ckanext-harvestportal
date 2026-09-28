@@ -11,6 +11,12 @@ def page():
     return "Hello, harvestportal!"
 
 
+def health():
+    # Load balancer health check. Deliberately does no DB/Solr work so a busy
+    # but working task isn't marked unhealthy and replaced mid-traffic spike.
+    return "OK", 200, {"Content-Type": "text/plain"}
+
+
 def api_docs():
     return toolkit.render("api_docs.html")
 
@@ -25,6 +31,8 @@ def mcp_docs():
 
 harvestportal.add_url_rule(
     "/harvestportal/page", view_func=page)
+harvestportal.add_url_rule(
+    "/health", view_func=health)
 harvestportal.add_url_rule(
     "/api-docs", view_func=api_docs)
 harvestportal.add_url_rule(

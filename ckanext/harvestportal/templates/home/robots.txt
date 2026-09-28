@@ -1,0 +1,23 @@
+{% ckan_extends %}
+
+{% block all_user_agents -%}
+{{ super() }}
+# Full-table exports: large, and re-downloading them is most of our bandwidth.
+Disallow: /datastore/dump/
+Disallow: /*/datastore/dump/
+# Search result pages with facets, sort or query parameters. Every
+# combination is a distinct URL, so crawling them never ends. Plain
+# pagination (?page=N) stays allowed so datasets remain discoverable.
+Disallow: /*?*q=
+Disallow: /*?*sort=
+Disallow: /*?*tags=
+Disallow: /*?*res_format=
+Disallow: /*?*license_id=
+Disallow: /*?*organization=
+Disallow: /*?*groups=
+Disallow: /*?*_limit=
+# Translated copies of the same pages (e.g. /es/dataset/...).
+Disallow: /*/dataset
+Disallow: /*/organization
+Disallow: /*/group
+{%- endblock %}

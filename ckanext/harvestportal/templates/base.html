@@ -1,4 +1,9 @@
 {% ckan_extends %}
+{% block meta %}
+  {{ super() }}
+  {% set robots_meta = h.harvestportal_robots_meta() %}
+  {% if robots_meta %}<meta name="robots" content="{{ robots_meta }}" />{% endif %}
+{% endblock %}
 {% block links %}
   <link rel="shortcut icon" href="/img/harvest_portal.ico" />
 {% endblock %}

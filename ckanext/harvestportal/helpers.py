@@ -34,6 +34,19 @@ def harvestportal_use_sso_login():
     )
 
 
+def harvestportal_robots_meta():
+    # Crawlers were walking every facet/sort combination of the search pages
+    # in every translation. Pages with query parameters (other than plain
+    # pagination) or a non-default locale get noindex/nofollow, so a crawler
+    # can reach them but won't follow their links into the next combination.
+    request = toolkit.request
+    has_filters = any(key != "page" for key in request.args)
+    translated = not request.environ.get("CKAN_LANG_IS_DEFAULT", True)
+    if has_filters or translated:
+        return "noindex, nofollow"
+    return None
+
+
 def get_helpers():
     return {
         "harvestportal_hello": harvestportal_hello,
@@ -41,4 +54,5 @@ def get_helpers():
         "harvestportal_organization_count": harvestportal_organization_count,
         "harvestportal_group_count": harvestportal_group_count,
         "harvestportal_use_sso_login": harvestportal_use_sso_login,
+        "harvestportal_robots_meta": harvestportal_robots_meta,
     }
