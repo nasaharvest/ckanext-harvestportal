@@ -41,3 +41,28 @@ def test_robots_txt_blocks_dumps_and_facets(app):
 def test_robots_meta(app, url, noindex):
     body = app.get(url).body
     assert ('<meta name="robots" content="noindex, nofollow"' in body) == noindex
+
+
+@pytest.mark.ckan_config("ckan.plugins", "harvestportal")
+@pytest.mark.usefixtures("with_plugins")
+def test_robots_txt_blocks_activity_pages(app):
+    body = app.get("/robots.txt").body
+    assert "Disallow: /dataset/activity/" in body
+    assert "Disallow: /organization/activity/" in body
+    assert "Disallow: /user/activity/" in body
+
+
+@pytest.mark.ckan_config("ckan.plugins", "activity harvestportal")
+@pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index")
+def test_activity_pages_are_noindex(app, migrate_db_for):
+    from ckan.tests import factories
+    migrate_db_for("activity")
+    dataset = factories.Dataset()
+    org = factories.Organization()
+    for url in [f"/dataset/activity/{dataset['name']}",
+                f"/organization/activity/{org['name']}"]:
+        resp = app.get(url)
+        assert resp.status_code == 200
+        assert '<meta name="robots" content="noindex, nofollow"' in resp.body
+    body = app.get(f"/dataset/{dataset['name']}").body
+    assert '<meta name="robots" content="noindex, nofollow"' not in body

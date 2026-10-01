@@ -39,10 +39,13 @@ def harvestportal_robots_meta():
     # in every translation. Pages with query parameters (other than plain
     # pagination) or a non-default locale get noindex/nofollow, so a crawler
     # can reach them but won't follow their links into the next combination.
+    # Activity streams, change diffs and old dataset versions are the same
+    # kind of trap, so they get it too.
     request = toolkit.request
     has_filters = any(key != "page" for key in request.args)
     translated = not request.environ.get("CKAN_LANG_IS_DEFAULT", True)
-    if has_filters or translated:
+    activity_page = (request.endpoint or "").startswith("activity.")
+    if has_filters or translated or activity_page:
         return "noindex, nofollow"
     return None
 

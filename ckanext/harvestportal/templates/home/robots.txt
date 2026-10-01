@@ -16,6 +16,16 @@ Disallow: /*?*license_id=
 Disallow: /*?*organization=
 Disallow: /*?*groups=
 Disallow: /*?*_limit=
+# Activity streams, change diffs and old versions (activity plugin): one
+# page per edit, paginated, nothing a search engine needs.
+Disallow: /dataset/activity/
+Disallow: /dataset/changes
+Disallow: /organization/activity/
+Disallow: /organization/changes
+Disallow: /group/activity/
+Disallow: /group/changes
+Disallow: /user/activity/
+Disallow: /dashboard
 # Translated copies of the same pages (e.g. /es/dataset/...).
 Disallow: /*/dataset
 Disallow: /*/organization

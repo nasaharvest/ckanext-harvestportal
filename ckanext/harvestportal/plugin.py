@@ -3,6 +3,7 @@ import ckan.plugins.toolkit as toolkit
 
 
 # import ckanext.harvestportal.cli as cli
+import ckanext.harvestportal.activity_privacy as activity_privacy
 import ckanext.harvestportal.compress as compress
 import ckanext.harvestportal.helpers as helpers
 import ckanext.harvestportal.search_guard as search_guard
@@ -16,7 +17,7 @@ class HarvestportalPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
 
     # plugins.implements(plugins.IAuthFunctions)
-    # plugins.implements(plugins.IActions)
+    plugins.implements(plugins.IActions)
     plugins.implements(plugins.IBlueprint)
     # plugins.implements(plugins.IClick)
     plugins.implements(plugins.ITemplateHelpers)
@@ -89,8 +90,8 @@ class HarvestportalPlugin(plugins.SingletonPlugin):
 
     # IActions
 
-    # def get_actions(self):
-    #     return action.get_actions()
+    def get_actions(self):
+        return activity_privacy.get_actions()
 
     # IBlueprint
 
@@ -105,7 +106,8 @@ class HarvestportalPlugin(plugins.SingletonPlugin):
     # ITemplateHelpers
 
     def get_helpers(self):
-        return helpers.get_helpers()
+        return dict(helpers.get_helpers(),
+                    linked_user=activity_privacy.linked_user)
 
     # IValidators
 
