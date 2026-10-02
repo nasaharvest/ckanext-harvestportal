@@ -5,6 +5,7 @@ import ckan.plugins.toolkit as toolkit
 # import ckanext.harvestportal.cli as cli
 import ckanext.harvestportal.activity_privacy as activity_privacy
 import ckanext.harvestportal.compress as compress
+import ckanext.harvestportal.cors as cors
 import ckanext.harvestportal.helpers as helpers
 import ckanext.harvestportal.search_guard as search_guard
 import ckanext.harvestportal.views as views
@@ -32,6 +33,7 @@ class HarvestportalPlugin(plugins.SingletonPlugin):
         if toolkit.asbool(config.get("ckanext.harvestportal.compress", True)):
             compress.init_compress(app)
         search_guard.init_search_guard(app)
+        cors.init_cors_max_age(app)
         return app
 
     def make_error_log_middleware(self, app, config):
