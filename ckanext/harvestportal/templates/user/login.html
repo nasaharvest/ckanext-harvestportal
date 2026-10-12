@@ -16,7 +16,11 @@ false), where the default username/password form is used instead. #}
   For assistance, please contact keniston@umd.edu.{% endtrans %}
 </p>
 <p>
-  <a href="{{ h.url_for('user.login') }}/oidc-pkce" class="btn btn-primary"
+  {# Pass a local came_from on, so single sign-on returns the user to the page
+  that sent them here (e.g. a data export). Only same-site paths. #}
+  {% set came_from = request.args.get('came_from', '') %}
+  {% set came_from = came_from if came_from.startswith('/') and not came_from.startswith('//') else '' %}
+  <a href="{{ h.url_for('user.login') }}/oidc-pkce{% if came_from %}?came_from={{ came_from|urlencode }}{% endif %}" class="btn btn-primary"
     ><i class="fa fa-sign-in" aria-hidden="true"></i> Log in via single sign-on</a
   >
 </p>
