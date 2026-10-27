@@ -110,8 +110,12 @@ class HarvestportalPlugin(plugins.SingletonPlugin):
     # ITemplateHelpers
 
     def get_helpers(self):
-        return dict(helpers.get_helpers(),
-                    linked_user=activity_privacy.linked_user)
+        extra = {"linked_user": activity_privacy.linked_user}
+        # A chained helper needs the helper it wraps, so only when xloader
+        # (which provides xloader_badge) is enabled.
+        if plugins.plugin_loaded("xloader"):
+            extra["xloader_badge"] = helpers.xloader_badge
+        return dict(helpers.get_helpers(), **extra)
 
     # IValidators
 

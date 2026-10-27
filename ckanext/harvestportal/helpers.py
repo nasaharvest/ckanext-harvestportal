@@ -50,6 +50,26 @@ def harvestportal_robots_meta():
     return None
 
 
+# Pages that list every resource of a dataset. xloader's badge helper looks
+# up each resource's last load job (with its log) before deciding whether to
+# show a badge, which it only does while a load is pending, running or has
+# failed. On these pages that is one lookup per resource - about 10 s for a
+# dataset with 165 resources - so the badge is skipped here. Resource pages,
+# where the load status matters, still show it.
+RESOURCE_LIST_ENDPOINTS = frozenset({
+    "dataset.read",
+    "dataset.resources",
+    "activity.package_history",
+})
+
+
+@toolkit.chained_helper
+def xloader_badge(next_helper, resource):
+    if toolkit.request and toolkit.request.endpoint in RESOURCE_LIST_ENDPOINTS:
+        return ""
+    return next_helper(resource)
+
+
 def get_helpers():
     return {
         "harvestportal_hello": harvestportal_hello,
