@@ -1,0 +1,55 @@
+{#
+  The Cite dialog: the data provider's own citation (if any), the dataset
+  cited in six styles with copy buttons, and reference-manager downloads.
+  Shared layout with the Harvest Portal theme.
+#}
+{% set cite = h.harvestportal_citation(pkg) %}
+<div class="modal fade cite-dialog" id="cite-dialog" tabindex="-1" aria-labelledby="cite-dialog-title" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="cite-dialog-title">{{ _('Cite this dataset') }}</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Close') }}"></button>
+      </div>
+      <div class="modal-body">
+        {% if cite.provider_citation %}
+          <div class="cite-provider">
+            <p class="cite-label">{{ _('Citation requested by the data provider') }}</p>
+            <div class="cite-row">
+              <p class="cite-text" id="cite-text-provider">{{ cite.provider_citation }}</p>
+              <button type="button" class="btn btn-sm cite-copy" data-cite-copy="cite-text-provider">
+                <i class="fa fa-copy" aria-hidden="true"></i> <span>{{ _('Copy') }}</span>
+              </button>
+            </div>
+          </div>
+        {% endif %}
+
+        <dl class="cite-styles">
+          {% for key, label, html, text in cite.styles %}
+            <div class="cite-row">
+              <dt class="cite-style-name">{{ label }}</dt>
+              <dd class="cite-text" id="cite-text-{{ key }}">{{ html }}</dd>
+              <button type="button" class="btn btn-sm cite-copy" data-cite-copy="cite-text-{{ key }}" aria-label="{{ _('Copy {style} citation').format(style=label) }}">
+                <i class="fa fa-copy" aria-hidden="true"></i> <span>{{ _('Copy') }}</span>
+              </button>
+            </div>
+          {% endfor %}
+        </dl>
+
+        {% if cite.uses_group_author %}
+          <p class="cite-note">{{ _('This dataset lists no individual authors, so the organization that published it is cited as the author.') }}</p>
+        {% endif %}
+      </div>
+      <div class="modal-footer cite-files">
+        <span class="cite-label">{{ _('Download for a reference manager:') }}</span>
+        {% for ext, label, url in cite.files %}
+          <a class="btn btn-sm btn-default" href="{{ url }}" download>
+            <i class="fa fa-download" aria-hidden="true"></i> {{ label }}
+          </a>
+        {% endfor %}
+        <span class="cite-hint">{{ _('RIS works with Zotero, Mendeley, EndNote and RefWorks.') }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+{% asset 'harvestportal/citation-js' %}

@@ -70,8 +70,25 @@ def xloader_badge(next_helper, resource):
     return next_helper(resource)
 
 
+def harvestportal_citation(dataset):
+    """Everything the dataset page's Cite dialog shows."""
+    from ckanext.harvestportal import citation
+    from ckanext.harvestportal.views import citation_data_for
+    data = citation_data_for(dataset)
+    return {
+        "provider_citation": data["provider_citation"],
+        "styles": citation.formatted_citations(data),
+        "files": [
+            (ext, label, toolkit.url_for("harvestportal.citation_file", id=dataset["name"], fmt=ext))
+            for ext, (label, _type) in citation.FILE_FORMATS.items()
+        ],
+        "uses_group_author": data["authors"][0].is_group and not (dataset.get("author") or "").strip(),
+    }
+
+
 def get_helpers():
     return {
+        "harvestportal_citation": harvestportal_citation,
         "harvestportal_hello": harvestportal_hello,
         "harvestportal_dataset_count": harvestportal_dataset_count,
         "harvestportal_organization_count": harvestportal_organization_count,

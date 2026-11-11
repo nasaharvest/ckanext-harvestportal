@@ -1,0 +1,12 @@
+{% ckan_extends %}
+
+{# "Cite" button next to Manage (shown to every visitor) and its dialog. #}
+{% block content_action %}
+  {{ super() }}
+  {% if pkg and not pkg.get('state', 'active').startswith('draft') %}
+    <button type="button" class="btn btn-default btn-cite" data-bs-toggle="modal" data-bs-target="#cite-dialog">
+      <i class="fa fa-quote-right" aria-hidden="true"></i> {{ _('Cite') }}
+    </button>
+    {% snippet 'package/snippets/citation_dialog.html', pkg=pkg %}
+  {% endif %}
+{% endblock %}
