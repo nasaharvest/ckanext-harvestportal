@@ -82,7 +82,8 @@ def harvestportal_citation(dataset):
             (ext, label, toolkit.url_for("harvestportal.citation_file", id=dataset["name"], fmt=ext))
             for ext, (label, _type) in citation.FILE_FORMATS.items()
         ],
-        "uses_group_author": data["authors"][0].is_group and not (dataset.get("author") or "").strip(),
+        # author | organization | portal | none (see citation.citation_data)
+        "author_source": data["author_source"],
     }
 
 

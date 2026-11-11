@@ -66,11 +66,26 @@ def citation_file(id, fmt):
     }
 
 
+# Citation settings (ckan.ini / CKANEXT__HARVESTPORTAL__CITATION__* env vars):
+#   ckanext.harvestportal.citation.use_author_field  cite the dataset's author
+#       field. Default false: on this portal the author field often holds
+#       the person who uploaded a dataset rather than its creator (see the
+#       2026-11 citation metadata audit); the organization is cited instead.
+#       Set to true once the author fields are corrected.
+#   ckanext.harvestportal.citation.non_author_orgs  space-separated
+#       organization names that are filing categories, not authors (default
+#       "external-sources"); their datasets are cited by title when they
+#       have no author.
 def citation_data_for(dataset):
+    config = toolkit.config
     return citation.citation_data(
         dataset,
-        site_title=toolkit.config.get("ckan.site_title") or "Harvest Portal",
+        site_title=config.get("ckan.site_title") or "Harvest Portal",
         dataset_url=toolkit.url_for("dataset.read", id=dataset["name"], _external=True),
+        use_author_field=toolkit.asbool(
+            config.get("ckanext.harvestportal.citation.use_author_field", False)),
+        non_author_orgs=toolkit.aslist(
+            config.get("ckanext.harvestportal.citation.non_author_orgs", "external-sources")),
     )
 
 

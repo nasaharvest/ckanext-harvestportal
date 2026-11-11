@@ -135,6 +135,45 @@ def test_html_italicises_title_and_escapes():
     assert "<b>" not in str(html["apa"])
 
 
+def test_author_field_can_be_ignored():
+    d = citation.citation_data(
+        {"name": "x", "title": "Yield Data", "author": "Blake Munshell",
+         "organization": {"name": "fao", "title": "FAO"}, "extras": []},
+        "Portal", URL, today=TODAY, use_author_field=False)
+    assert [n.literal for n in d["authors"]] == ["FAO"]
+    assert d["author_source"] == "organization"
+
+
+def test_filing_organization_is_not_an_author():
+    d = citation.citation_data(
+        {"name": "x", "title": "Global School Closures", "author": "",
+         "organization": {"name": "external-sources", "title": "External Sources"},
+         "metadata_created": "2022-03-01T00:00:00", "extras": []},
+        "Harvest Portal", URL, today=TODAY, non_author_orgs=["external-sources"])
+    assert d["authors"] == []
+    assert d["author_source"] == "none"
+    s = _styles(d)
+    assert s["apa"] == "Global School Closures [Data set]. (2022). Harvest Portal. " + URL
+    assert s["mla"].startswith("Global School Closures. Harvest Portal, 1 Mar. 2022,")
+    assert s["chicago"].startswith("Global School Closures. Harvest Portal, 2022. Dataset.")
+    assert s["harvard"].startswith("Global School Closures (2022) [Data set]. Harvest Portal.")
+    assert s["vancouver"].startswith("Global School Closures [dataset on the Internet]. Harvest Portal; 2022")
+    assert s["ieee"].startswith("\u201cGlobal School Closures,\u201d Harvest Portal, 2022.")
+    assert "External Sources" not in " ".join(s.values())
+    bib = citation.to_bibtex(d)
+    assert bib.startswith("@misc{dataset2022global,") and "author =" not in bib
+    assert "AU  -" not in citation.to_ris(d)
+    assert "author" not in json.loads(citation.to_csl_json(d))[0]
+
+
+def test_listed_author_still_used_under_a_filing_organization():
+    d = citation.citation_data(
+        {"name": "x", "title": "T", "author": "Our World in Data",
+         "organization": {"name": "external-sources", "title": "External Sources"}, "extras": []},
+        "Harvest Portal", URL, today=TODAY, non_author_orgs=["external-sources"])
+    assert d["author_source"] == "author"
+
+
 # --- files ------------------------------------------------------------------
 
 def test_bibtex():
@@ -176,6 +215,7 @@ def test_dataset_page_has_cite_dialog(app):
 
     assert 'data-bs-target="#cite-dialog"' in body
     assert "Cite this dataset" in body
+    assert "The organization that published this dataset is cited as the author." in body
     assert "Partner University. (" in body
     assert "<script>x</script>" not in body
     assert "/dataset/{}/citation.bib".format(dataset["name"]) in body
@@ -209,3 +249,28 @@ def test_citation_download_private_and_missing(app):
     assert app.get("/dataset/{}/citation.bib".format(private["name"])).status_code in (403, 404)
     assert app.get("/dataset/no-such-dataset/citation.bib").status_code == 404
     assert app.get("/dataset/{}/citation.exe".format(private["name"])).status_code == 404
+
+
+@pytest.mark.ckan_config("ckan.plugins", "harvestportal")
+@pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index")
+def test_harvest_defaults_ignore_author_and_external_sources(app):
+    fao = factories.Organization(name="fao-test", title="FAO")
+    ext = factories.Organization(name="external-sources", title="External Sources")
+    by_fao = factories.Dataset(owner_org=fao["id"], author="Blake Munshell", title="Malawi labels")
+    by_ext = factories.Dataset(owner_org=ext["id"], author="", title="School closures")
+
+    bib = app.get("/dataset/{}/citation.bib".format(by_fao["name"])).body
+    assert "author = {{FAO}}" in bib and "Munshell" not in bib
+    body = app.get("/dataset/{}".format(by_ext["name"])).body
+    assert "External Sources. (" not in body
+    assert "This dataset does not name an author" in body
+
+
+@pytest.mark.ckan_config("ckan.plugins", "harvestportal")
+@pytest.mark.ckan_config("ckanext.harvestportal.citation.use_author_field", "true")
+@pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index")
+def test_harvest_author_field_can_be_switched_on(app):
+    org = factories.Organization(title="FAO")
+    ds = factories.Dataset(owner_org=org["id"], author="Blake Munshell")
+    bib = app.get("/dataset/{}/citation.bib".format(ds["name"])).body
+    assert "author = {Munshell, Blake}" in bib

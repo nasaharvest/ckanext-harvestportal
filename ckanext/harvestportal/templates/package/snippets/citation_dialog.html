@@ -14,7 +14,7 @@
       <div class="modal-body">
         {% if cite.provider_citation %}
           <div class="cite-provider">
-            <p class="cite-label">{{ _('Citation requested by the data provider') }}</p>
+            <p class="cite-label">{{ _('Citation provided with this dataset') }}</p>
             <div class="cite-row">
               <p class="cite-text" id="cite-text-provider">{{ cite.provider_citation }}</p>
               <button type="button" class="btn btn-sm cite-copy" data-cite-copy="cite-text-provider">
@@ -36,8 +36,10 @@
           {% endfor %}
         </dl>
 
-        {% if cite.uses_group_author %}
-          <p class="cite-note">{{ _('This dataset lists no individual authors, so the organization that published it is cited as the author.') }}</p>
+        {% if cite.author_source in ('organization', 'portal') %}
+          <p class="cite-note">{{ _('The organization that published this dataset is cited as the author.') }}</p>
+        {% elif cite.author_source == 'none' %}
+          <p class="cite-note">{{ _('This dataset does not name an author, so the citation starts with its title.') }}</p>
         {% endif %}
       </div>
       <div class="modal-footer cite-files">

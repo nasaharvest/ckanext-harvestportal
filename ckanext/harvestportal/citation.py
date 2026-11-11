@@ -10,8 +10,12 @@ Builds, from a CKAN dataset dict:
   - BibTeX, RIS and CSL-JSON files.
 
 Metadata rules (most datasets only have some of these fields):
-  - authors: the dataset's "author" field; if empty, the organization is
-    cited as a group author; failing that, the portal itself.
+  - authors: the dataset's "author" field (unless the portal switches it
+    off with use_author_field=False); if empty, the organization is cited
+    as a group author, unless it is a catch-all filing organization
+    (non_author_orgs, e.g. "External Sources"), in which case the citation
+    has no author and starts with the title; with no organization at all,
+    the portal is the author.
   - year: a "Publication Date" extra if it contains a year, otherwise the
     year the dataset was created on the portal.
   - version: only when it looks like a version number (v2, 1.0.3); on the
@@ -146,13 +150,27 @@ def _date(value):
         return None
 
 
-def citation_data(dataset, site_title, dataset_url, today=None):
-    """Collect what the citations need from a CKAN dataset dict."""
+def citation_data(dataset, site_title, dataset_url, today=None,
+                  use_author_field=True, non_author_orgs=()):
+    """Collect what the citations need from a CKAN dataset dict.
+
+    use_author_field: False ignores the dataset's author field (for a portal
+    whose author fields aren't reliable yet).
+    non_author_orgs: organization names (slugs) that are filing categories,
+    not authors.
+    """
     extras = _extras(dataset)
-    org = (dataset.get("organization") or {}).get("title")
-    authors = parse_authors(dataset.get("author"))
+    org_dict = dataset.get("organization") or {}
+    org = org_dict.get("title")
+    authors = parse_authors(dataset.get("author")) if use_author_field else []
+    author_source = "author"
     if not authors:
-        authors = [Name(literal=org or site_title)]
+        if org and org_dict.get("name") in set(non_author_orgs):
+            author_source = "none"
+        elif org:
+            authors, author_source = [Name(literal=org)], "organization"
+        else:
+            authors, author_source = [Name(literal=site_title)], "portal"
 
     created = _date(dataset.get("metadata_created"))
     published = None
@@ -181,7 +199,8 @@ def citation_data(dataset, site_title, dataset_url, today=None):
     provider = next((v for k, v in extras.items() if k in PROVIDER_CITATION_KEYS and v), "")
 
     return {
-        "authors": authors,
+        "authors": authors,              # may be empty (author_source "none")
+        "author_source": author_source,  # author | organization | portal | none
         "title": (dataset.get("title") or dataset.get("name") or "").strip(),
         "published": published,          # (year, month|None, day|None) or None
         "version": version,
@@ -277,12 +296,16 @@ def _apa(d):
     title = [("i", d["title"])]
     if d["version"]:
         title.append(" (Version {})".format(d["version"]))
+    if not d["authors"]:
+        # No author: the title moves to the author position.
+        return title + [" [Data set]. ({}). ".format(year), _period(d["publisher"]), " ", d["url"]]
     return [_period(_apa_authors(d["authors"])), " ({}). ".format(year)] + title + \
         [" [Data set]. ", _period(d["publisher"]), " ", d["url"]]
 
 
 def _mla(d):
-    parts = [_period(_mla_authors(d["authors"])), " ", ("i", _period(d["title"])), " "]
+    parts = [_period(_mla_authors(d["authors"])), " "] if d["authors"] else []
+    parts += [("i", _period(d["title"])), " "]
     if d["version"]:
         parts.append("Version {}, ".format(d["version"]))
     parts.append(d["publisher"])
@@ -297,7 +320,8 @@ def _mla(d):
 
 
 def _chicago(d):
-    parts = [_period(_chicago_authors(d["authors"])), " ", ("i", _period(d["title"])), " "]
+    parts = [_period(_chicago_authors(d["authors"])), " "] if d["authors"] else []
+    parts += [("i", _period(d["title"])), " "]
     if d["version"]:
         parts.append("Version {}. ".format(d["version"]))
     parts.append(d["publisher"])
@@ -310,7 +334,10 @@ def _chicago(d):
 def _harvard(d):
     year = d["published"][0] if d["published"] else "n.d."
     a = d["accessed"]
-    parts = [_harvard_authors(d["authors"]), " ({}) ".format(year), ("i", d["title"])]
+    if d["authors"]:
+        parts = [_harvard_authors(d["authors"]), " ({}) ".format(year), ("i", d["title"])]
+    else:
+        parts = [("i", d["title"]), " ({})".format(year)]
     if d["version"]:
         parts.append(" (Version {})".format(d["version"]))
     parts.append(" [Data set]. {}. Available at: {} (Accessed: {} {} {}).".format(
@@ -321,7 +348,8 @@ def _harvard(d):
 def _vancouver(d):
     a = d["accessed"]
     year = d["published"][0] if d["published"] else ""
-    parts = [_period(_vancouver_authors(d["authors"])), " ", d["title"], " [dataset on the Internet]"]
+    parts = [_period(_vancouver_authors(d["authors"])), " "] if d["authors"] else []
+    parts += [d["title"], " [dataset on the Internet]"]
     if d["version"]:
         parts.append(". Version {}".format(d["version"]))
     parts.append(". {}; {} [cited {} {} {}]. Available from: {}".format(
@@ -331,7 +359,8 @@ def _vancouver(d):
 
 def _ieee(d):
     a = d["accessed"]
-    parts = [_ieee_authors(d["authors"]), ", “", d["title"], ",” "]
+    parts = [_ieee_authors(d["authors"]), ", "] if d["authors"] else []
+    parts += ["“", d["title"], ",” "]
     if d["version"]:
         parts.append("Version {}, ".format(d["version"]))
     parts.append(d["publisher"])
@@ -378,8 +407,10 @@ def _bibtex_escape(text):
 
 
 def bibtex_key(d):
-    first = d["authors"][0]
-    who = first.literal if first.is_group else first.family
+    who = ""
+    if d["authors"]:
+        first = d["authors"][0]
+        who = first.literal if first.is_group else first.family
     who = re.sub(r"[^a-z0-9]", "", who.lower())[:20] or "dataset"
     year = d["published"][0] if d["published"] else ""
     word = next((w for w in re.findall(r"[a-z0-9]+", d["title"].lower())
@@ -433,11 +464,12 @@ def to_csl_json(d):
         "id": bibtex_key(d),
         "type": "dataset",
         "title": d["title"],
-        "author": [author(n) for n in d["authors"]],
         "publisher": d["publisher"],
         "URL": d["url"],
         "accessed": {"date-parts": [[d["accessed"].year, d["accessed"].month, d["accessed"].day]]},
     }
+    if d["authors"]:
+        item["author"] = [author(n) for n in d["authors"]]
     if d["published"]:
         item["issued"] = {"date-parts": [[x for x in d["published"] if x]]}
     if d["version"]:
