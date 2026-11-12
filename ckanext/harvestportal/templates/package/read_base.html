@@ -6,6 +6,7 @@
   {% if pkg and not pkg.get('state', 'active').startswith('draft') %}
     <button type="button" class="btn btn-default btn-cite" data-bs-toggle="modal" data-bs-target="#cite-dialog">
       <i class="fa fa-quote-right" aria-hidden="true"></i> {{ _('Cite') }}
+      {%- if h.harvestportal_citation_beta() %} <span class="cite-beta">{{ _('Beta') }}</span>{% endif %}
     </button>
     {% snippet 'package/snippets/citation_dialog.html', pkg=pkg %}
   {% endif %}

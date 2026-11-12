@@ -8,10 +8,17 @@
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-title" id="cite-dialog-title">{{ _('Cite this dataset') }}</h2>
+        <h2 class="modal-title" id="cite-dialog-title">{{ _('Cite this dataset') }}
+          {%- if h.harvestportal_citation_beta() %} <span class="cite-beta">{{ _('Beta') }}</span>{% endif %}</h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Close') }}"></button>
       </div>
       <div class="modal-body">
+        {% if h.harvestportal_citation_beta() %}
+          <div class="cite-beta-notice" role="note">
+            <i class="fa fa-flask" aria-hidden="true"></i>
+            <p>{{ _('This citation tool is in beta. Citations are generated automatically from the dataset\'s metadata, which we are still reviewing. Please check the author, year and source against the original data provider before using a citation.') }}</p>
+          </div>
+        {% endif %}
         {% if cite.provider_citation %}
           <div class="cite-provider">
             <p class="cite-label">{{ _('Citation provided with this dataset') }}</p>

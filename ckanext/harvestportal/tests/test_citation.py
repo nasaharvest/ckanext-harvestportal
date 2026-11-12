@@ -274,3 +274,22 @@ def test_harvest_author_field_can_be_switched_on(app):
     ds = factories.Dataset(owner_org=org["id"], author="Blake Munshell")
     bib = app.get("/dataset/{}/citation.bib".format(ds["name"])).body
     assert "author = {Munshell, Blake}" in bib
+
+
+@pytest.mark.ckan_config("ckan.plugins", "harvestportal")
+@pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index")
+def test_cite_tool_is_labelled_beta_by_default(app):
+    dataset = factories.Dataset(owner_org=factories.Organization()["id"])
+    body = app.get("/dataset/{}".format(dataset["name"])).body
+    assert '<span class="cite-beta">Beta</span>' in body
+    assert "This citation tool is in beta." in body
+
+
+@pytest.mark.ckan_config("ckan.plugins", "harvestportal")
+@pytest.mark.ckan_config("ckanext.harvestportal.citation.beta", "false")
+@pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index")
+def test_beta_label_can_be_switched_off(app):
+    dataset = factories.Dataset(owner_org=factories.Organization()["id"])
+    body = app.get("/dataset/{}".format(dataset["name"])).body
+    assert "cite-beta" not in body
+    assert "Cite this dataset" in body
