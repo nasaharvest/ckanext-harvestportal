@@ -70,8 +70,36 @@ def xloader_badge(next_helper, resource):
     return next_helper(resource)
 
 
+def harvestportal_citation(dataset):
+    """Everything the dataset page's Cite dialog shows."""
+    from ckanext.harvestportal import citation
+    from ckanext.harvestportal.views import citation_data_for
+    data = citation_data_for(dataset)
+    return {
+        "provider_citation": data["provider_citation"],
+        "styles": citation.formatted_citations(data),
+        "files": [
+            (ext, label, toolkit.url_for("harvestportal.citation_file", id=dataset["name"], fmt=ext))
+            for ext, (label, _type) in citation.FILE_FORMATS.items()
+        ],
+        # author | organization | portal | none (see citation.citation_data)
+        "author_source": data["author_source"],
+    }
+
+
+def harvestportal_citation_beta():
+    """Label the Cite tool as Beta while dataset metadata is being reviewed.
+
+    ckanext.harvestportal.citation.beta (default true); set to false to
+    remove the Beta tag and notice once the metadata audit is done.
+    """
+    return toolkit.asbool(toolkit.config.get("ckanext.harvestportal.citation.beta", True))
+
+
 def get_helpers():
     return {
+        "harvestportal_citation": harvestportal_citation,
+        "harvestportal_citation_beta": harvestportal_citation_beta,
         "harvestportal_hello": harvestportal_hello,
         "harvestportal_dataset_count": harvestportal_dataset_count,
         "harvestportal_organization_count": harvestportal_organization_count,

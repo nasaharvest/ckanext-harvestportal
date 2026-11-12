@@ -1,3 +1,10 @@
+# Copy buttons in the dataset Cite dialog (templates/package/snippets/
+# citation_dialog.html). No CKAN module or jQuery needed.
+citation-js:
+  output: ckanext-harvestportal/%(version)s-citation.js
+  contents:
+    - citation.js
+
 # harvestportal-js:
 #   filter: rjsmin
 #   output: ckanext-harvestportal/%(version)s-harvestportal.js
